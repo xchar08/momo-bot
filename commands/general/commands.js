@@ -1,12 +1,12 @@
 // commands.js
 const { EmbedBuilder } = require('discord.js');
+const configHandler = require('../../config/configHandler');
 
 module.exports = {
     name: 'commands',
     description: 'Lists all available commands.',
     category: 'General',
     async execute(message, args, client) {
-        const configHandler = require('../../config/configHandler');
         const prefix = configHandler.getPrefix(message.guild.id);
 
         const embed = new EmbedBuilder()
@@ -31,13 +31,12 @@ module.exports = {
         }
 
         // **Add Presets Information**
-        const config = configHandler.config;
         const logChannelId = configHandler.getLogChannel(message.guild.id);
         const logChannel = logChannelId ? `<#${logChannelId}>` : 'Not Set';
         const adminRoleName = configHandler.getAdminRole() || 'Not Set';
         const verificationRoleName = configHandler.getVerificationRole() || 'Not Set';
-        const archiveCategoryId = config.archiveCategoryId ? `<#${config.archiveCategoryId}>` : 'Not Set';
-        const collabCategoryId = config.collabCategoryId ? `<#${config.collabCategoryId}>` : 'Not Set';
+        const archiveCategoryId = configHandler.getArchiveCategory() ? `<#${configHandler.getArchiveCategory()}>` : 'Not Set';
+        const collabCategoryId = configHandler.getCollabCategory() ? `<#${configHandler.getCollabCategory()}>` : 'Not Set';
 
         // **Add Counting Game Information**
         const countingChannels = configHandler.getCountingChannels(message.guild.id);
@@ -58,8 +57,8 @@ module.exports = {
             },
             {
                 name: '📚 Clubs',
-                value: Object.keys(config.clubs).length > 0
-                    ? Object.entries(config.clubs).map(([club, details]) =>
+                value: Object.keys(configHandler.getAllClubs()).length > 0
+                    ? Object.entries(configHandler.getAllClubs()).map(([club, details]) =>
                         `**${club}** - Max Officers: ${details.maxOfficers}, Officer Roles: ${details.officerRoles.join(', ')}, Additional Roles: ${details.additionalRoles.join(', ')}`
                     ).join('\n')
                     : 'No clubs configured.',

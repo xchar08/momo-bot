@@ -37,7 +37,7 @@ const saveConfig = () => {
     fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
 };
 
-// Getter and Setter Functions
+// Existing Getter and Setter Functions
 const getPrefix = (guildId) => {
     return config.prefixes[guildId] || process.env.DEFAULT_PREFIX || '!';
 };
@@ -101,13 +101,20 @@ const setArchiveCategory = (categoryId) => {
     saveConfig();
 };
 
+const getArchiveCategory = () => {  // Added getter
+    return config.archiveCategoryId;
+};
+
 const setCollabCategory = (categoryId) => {
     config.collabCategoryId = categoryId;
     saveConfig();
 };
 
-// **New Getter and Setter for Counting Channels, Modes, and Counts**
+const getCollabCategory = () => {  // Added getter
+    return config.collabCategoryId;
+};
 
+// New Getter and Setter for Counting Channels, Modes, and Counts
 const getCountingChannels = (guildId) => {
     return config.countingChannels[guildId] || [];
 };
@@ -194,7 +201,9 @@ module.exports = {
     removeClub,
     getAllClubs,
     setArchiveCategory,
+    getArchiveCategory,    // Exported getter
     setCollabCategory,
+    getCollabCategory,     // Exported getter
     getCountingChannels,
     addCountingChannel,
     removeCountingChannel,
