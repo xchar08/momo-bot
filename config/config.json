@@ -3,38 +3,17 @@
         "your-guild-id": "!"
     },
     "logChannels": {
-        "your-guild-id": "",
-        "1318751291366965268": "1318897964110057573"
+        "your-guild-id": ""
     },
     "countingChannels": {
-        "your-guild-id": [],
-        "1318751291366965268": []
+        "your-guild-id": []
     },
-    "clubs": {
-        "mobi": {
-            "members": {},
-            "maxMembers": 5
-        },
-        "sase": {
-            "members": {},
-            "maxMembers": 5
-        },
-        "acm": {
-            "members": {
-                "event-planner": "755407619472097280"
-            },
-            "maxMembers": 5
-        }
-    },
-    "countingModes": {
-        "1318756722692849664": "binary"
-    },
-    "countingCounts": {
-        "1318756722692849664": 4
-    },
-    "verificationRole": "1318759431642546226",
+    "clubs": {},
+    "countingModes": {},
+    "countingCounts": {},
+    "verificationRole": "",
     "unverifiedRole": "",
-    "adminRole": "1318808872328233020",
+    "adminRole": "",
     "archiveCategoryId": "",
     "collabCategoryId": "",
     "ticketCategoryId": ""
