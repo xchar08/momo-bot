@@ -1,0 +1,38 @@
+# Node.js Dependencies
+node_modules/
+
+# Environment Variables
+.env
+
+# Log Files
+*.log
+logs/
+
+# Temporary Files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional: Operating System Files
+.DS_Store
+Thumbs.db
+
+# Optional: IDE and Editor Folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Optional: Coverage Reports
+coverage/
+
+# Optional: Miscellaneous
+*.pid
+*.seed
+*.pid.lock
+
+# Optional: Build Directories (if applicable)
+dist/
+build/

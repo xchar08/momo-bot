@@ -11,12 +11,12 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor('#0099ff')
-            .setTitle('Bot Commands')
+            .setTitle('📚 Bot Commands')
             .setDescription('Here is a list of all available commands:')
             .setTimestamp()
             .setFooter({ text: 'Bot by YourName' });
 
-        // Dynamically list commands
+        // Dynamically categorize commands
         const categories = {};
 
         client.commands.forEach(command => {
@@ -25,11 +25,12 @@ module.exports = {
             categories[category].push(`\`${prefix}${command.name}\`: ${command.description}`);
         });
 
+        // Add commands to embed categorized by their categories
         for (const [category, cmds] of Object.entries(categories)) {
             embed.addFields({ name: `**${category}**`, value: cmds.join('\n'), inline: false });
         }
 
-        // Add Presets Information
+        // **Add Presets Information**
         const config = configHandler.config;
         const logChannelId = configHandler.getLogChannel(message.guild.id);
         const logChannel = logChannelId ? `<#${logChannelId}>` : 'Not Set';
@@ -38,10 +39,21 @@ module.exports = {
         const archiveCategoryId = config.archiveCategoryId ? `<#${config.archiveCategoryId}>` : 'Not Set';
         const collabCategoryId = config.collabCategoryId ? `<#${config.collabCategoryId}>` : 'Not Set';
 
+        // **Add Counting Game Information**
+        const countingChannels = configHandler.getCountingChannels(message.guild.id);
+        const countingChannelsFormatted = countingChannels.length > 0
+            ? countingChannels.map(id => `<#${id}>`).join(', ')
+            : 'No counting channels set.';
+
         embed.addFields(
             {
                 name: '📁 Current Presets',
                 value: `**Log Channel:** ${logChannel}\n**Admin Role:** ${adminRoleName}\n**Verification Role:** ${verificationRoleName}\n**Archive Category:** ${archiveCategoryId}\n**Collaboration Category:** ${collabCategoryId}`,
+                inline: false
+            },
+            {
+                name: '🎲 Counting Game',
+                value: `**Counting Channels:** ${countingChannelsFormatted}\n**Setup Command:** \`${prefix}setcountingchannel #channel\`\n**Manage Counting Channels:** \`${prefix}setcountingchannel add/remove/list\``,
                 inline: false
             },
             {
@@ -55,6 +67,7 @@ module.exports = {
             }
         );
 
+        // Send the embed
         message.channel.send({ embeds: [embed] });
     },
 };

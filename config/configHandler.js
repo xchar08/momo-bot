@@ -104,6 +104,34 @@ const setCollabCategory = (categoryId) => {
     saveConfig();
 };
 
+// **New Getter and Setter for Counting Channels**
+
+const getCountingChannels = (guildId) => {
+    return config.countingChannels[guildId] || [];
+};
+
+const addCountingChannel = (guildId, channelId) => {
+    if (!config.countingChannels[guildId]) {
+        config.countingChannels[guildId] = [];
+    }
+    if (!config.countingChannels[guildId].includes(channelId)) {
+        config.countingChannels[guildId].push(channelId);
+        saveConfig();
+    }
+};
+
+const removeCountingChannel = (guildId, channelId) => {
+    if (config.countingChannels[guildId]) {
+        config.countingChannels[guildId] = config.countingChannels[guildId].filter(id => id !== channelId);
+        saveConfig();
+    }
+};
+
+const clearCountingChannels = (guildId) => {
+    config.countingChannels[guildId] = [];
+    saveConfig();
+};
+
 module.exports = {
     getPrefix,
     setPrefix,
@@ -119,5 +147,8 @@ module.exports = {
     getAllClubs,
     setArchiveCategory,
     setCollabCategory,
-    config
+    getCountingChannels,      // New
+    addCountingChannel,       // New
+    removeCountingChannel,    // New
+    clearCountingChannels     // New
 };
