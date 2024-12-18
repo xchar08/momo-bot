@@ -1,6 +1,7 @@
 {
     "prefixes": {
-        "your-guild-id": "!"
+        "your-guild-id": "!",
+        "1318751291366965268": "!"
     },
     "logChannels": {
         "your-guild-id": ""
@@ -9,9 +10,11 @@
         "your-guild-id": []
     },
     "clubs": {
-        "rover": {
+        "csec": {
             "members": {
-                "sparklead": "1116262688310431795"
+                "webdev": "1116262688310431795",
+                "idekwdqwd": "668349739565056020",
+                "idekwdqwdwefwfwe": "668349739565056020"
             },
             "maxMembers": 5
         }
@@ -21,6 +24,7 @@
     "verificationRole": "1318759431642546226",
     "unverifiedRole": "1318759609523114055",
     "adminRole": "1318808872328233020",
-    "archiveCategoryId": "",
-    "collabCategoryId": ""
+    "archiveCategoryId": "archive",
+    "collabCategoryId": "collabs",
+    "ticketCategoryId": "tickets"
 }

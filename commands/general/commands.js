@@ -14,7 +14,8 @@ module.exports = {
         const verificationRole = configHandler.getVerificationRole() || 'Not Set';
         const archiveCategory = configHandler.getArchiveCategory() || 'Not Set';
         const collabCategory = configHandler.getCollabCategory() || 'Not Set';
-        const countingChannels = configHandler.getCountingChannels(message.guild.id);
+        const ticketCategory = configHandler.getTicketCategory() || 'Not Set';
+        const countingChannels = configHandler.getCountingChannels(message.guild.id) || [];
         const clubs = configHandler.getAllClubs();
 
         const countingModes = 'normal, hex, binary, count2, count3, count4, count5, countdown';
@@ -32,6 +33,7 @@ module.exports = {
                         `\`${prefix}setadminrole\`: Sets the admin role.\n` +
                         `\`${prefix}setarchivecategory\`: Sets the archive category for the server.\n` +
                         `\`${prefix}setcollabcategory\`: Sets the collaboration category for the server.\n` +
+                        `\`${prefix}setticketcategory\`: Sets the ticket category for the server.\n` +
                         `\`${prefix}setcountingchannel\`: Adds, removes, or lists a counting channel.\n` +
                         `\`${prefix}setcountingmode\`: Sets the counting mode for a counting channel.\n` +
                         `\`${prefix}setlogchannel\`: Sets the log channel for the server.\n` +
@@ -42,7 +44,7 @@ module.exports = {
                 },
                 {
                     name: '**Collaboration**',
-                    value: `\`${prefix}collab\`: Creates a temporary collaboration channel for planning events or divisions.`
+                    value: `\`${prefix}collab <club1,club2,...> <event>\`: Creates a temporary collaboration channel for planning events or divisions.`
                 },
                 {
                     name: '**General**',
@@ -50,12 +52,10 @@ module.exports = {
                         `\`${prefix}ping\`: Replies with Pong!`
                 },
                 {
-                    name: '**Override**',
-                    value: `\`${prefix}override\`: Overrides officer limits by temporarily assigning roles.`
-                },
-                {
                     name: '**Ticket**',
-                    value: `\`${prefix}ticket\`: Creates a ticket channel for admin approval of officer roles.`
+                    value: `\`${prefix}ticket <club> @member <IRL name>\`: Creates a ticket channel for admin approval of officer roles.\n` +
+                        `\`${prefix}approve @member <role>\`: Approves the ticket and assigns the role.\n` +
+                        `\`${prefix}reject <reason>\`: Rejects the ticket with a specified reason.`
                 },
                 {
                     name: '📁 **Current Configurations**',
@@ -63,7 +63,8 @@ module.exports = {
                         `**Admin Role**: ${adminRole}\n` +
                         `**Verification Role**: ${verificationRole}\n` +
                         `**Archive Category**: ${archiveCategory}\n` +
-                        `**Collaboration Category**: ${collabCategory}`
+                        `**Collaboration Category**: ${collabCategory}\n` +
+                        `**Ticket Category**: ${ticketCategory}`
                 },
                 {
                     name: '🎲 **Counting Game**',
@@ -83,6 +84,7 @@ module.exports = {
             .setFooter({ text: 'momo-bot by xchar08' })
             .setTimestamp();
 
+        // Send the embed
         try {
             await message.channel.send({ embeds: [embed] });
         } catch (error) {

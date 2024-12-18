@@ -1,11 +1,10 @@
 const configHandler = require('../../config/configHandler');
 
 module.exports = {
-    name: 'setcollabcategory',
-    description: 'Sets the collaboration category for the server.',
+    name: 'setticketcategory',
+    description: 'Sets the ticket category for the server.',
     category: 'Admin',
     async execute(message, args, client) {
-        // Check if the user has the admin role
         const adminRoleId = configHandler.getAdminRole();
         if (!adminRoleId) {
             return message.reply('❌ Admin role is not set. Please set it using the `!setadminrole` command.');
@@ -15,14 +14,11 @@ module.exports = {
             return message.reply('❌ You do not have permission to use this command.');
         }
 
-        // Validate command arguments
         if (args.length < 1) {
-            return message.reply('❌ Please specify the name of the category.\nUsage: `!setcollabcategory <category name>`');
+            return message.reply('❌ Please specify the name of the category.\nUsage: `!setticketcategory <category name>`');
         }
 
-        const categoryName = args.join(' '); // Combine arguments for multi-word names
-
-        // Search for the category by name
+        const categoryName = args.join(' ');
         const category = message.guild.channels.cache.find(
             channel => channel.type === 4 && channel.name.toLowerCase() === categoryName.toLowerCase()
         );
@@ -31,8 +27,7 @@ module.exports = {
             return message.reply(`❌ No category with the name "${categoryName}" was found.`);
         }
 
-        // Save the category name in the config
-        configHandler.setCollabCategory(category.name);
-        message.reply(`✅ Collaboration category has been set to "${category.name}".`);
+        configHandler.setTicketCategory(category.name);
+        message.reply(`✅ Ticket category has been set to "${category.name}".`);
     },
 };

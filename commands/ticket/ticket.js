@@ -1,4 +1,3 @@
-// ticket.js
 const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const configHandler = require('../../config/configHandler');
 
@@ -7,44 +6,41 @@ module.exports = {
     description: 'Creates a ticket channel for admin approval of officer roles.',
     category: 'Ticket',
     async execute(message, args, client) {
-        // Command syntax: ticket <club name> @member <IRL name>
         if (args.length < 2) {
-            return message.reply(`Usage: \`${configHandler.getPrefix(message.guild.id)}ticket <club name> @member <IRL name>\``);
+            return message.reply(`Usage: \`${configHandler.getPrefix(message.guild.id)}ticket <club> @member <IRL name>\``);
         }
 
-        const clubName = args[0];
+        const clubName = args[0].toLowerCase();
         const memberMention = message.mentions.members.first();
         const irlName = args.slice(2).join(' ');
 
         if (!irlName) {
-            return message.reply(`Usage: \`${configHandler.getPrefix(message.guild.id)}ticket <club name> @member <IRL name>\``);
+            return message.reply(`Usage: \`${configHandler.getPrefix(message.guild.id)}ticket <club> @member <IRL name>\``);
         }
 
-        // Fetch club configuration
-        const clubConfig = configHandler.getClubConfig(clubName);
-        if (!clubConfig) {
-            return message.reply(`Club "${clubName}" does not exist.`);
+        const allClubs = configHandler.getAllClubs();
+        if (!allClubs[clubName]) {
+            return message.reply(`❌ Club "${clubName}" does not exist.`);
         }
 
-        // Fetch the member to verify
         if (!memberMention) {
-            return message.reply('Please mention a valid member to verify.');
+            return message.reply('❌ Please mention a valid member to verify.');
         }
 
-        const member = memberMention;
+        const ticketCategoryName = configHandler.getTicketCategory();
+        const ticketCategory = message.guild.channels.cache.find(
+            channel => channel.type === 4 && channel.name.toLowerCase() === ticketCategoryName.toLowerCase()
+        );
 
-        // Create a ticket channel under Collaborations category
-        const collabCategoryId = configHandler.config.collabCategoryId;
-        const collabCategory = message.guild.channels.cache.get(collabCategoryId);
-        if (!collabCategory || collabCategory.type !== 4) { // 4 is GUILD_CATEGORY in Discord.js v14
-            return message.reply('Collaborations category does not exist or is not a category. Please check your config.');
+        if (!ticketCategory) {
+            return message.reply('❌ Ticket category does not exist or is not set. Please set it using the `!setticketcategory` command.');
         }
 
         try {
             const ticketChannel = await message.guild.channels.create({
-                name: `ticket-${member.user.username}`,
-                type: 0, // 0 is GUILD_TEXT in Discord.js v14
-                parent: collabCategory.id,
+                name: `ticket-${memberMention.user.username}`,
+                type: 0,
+                parent: ticketCategory.id,
                 permissionOverwrites: [
                     {
                         id: message.guild.roles.everyone.id,
@@ -52,12 +48,16 @@ module.exports = {
                     },
                     {
                         id: configHandler.getAdminRole(),
-                        allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ManageChannels],
+                        allow: [
+                            PermissionFlagsBits.ViewChannel,
+                            PermissionFlagsBits.SendMessages,
+                            PermissionFlagsBits.ManageChannels,
+                        ],
                     },
                     {
-                        id: member.id,
+                        id: memberMention.id,
                         allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
-                    }
+                    },
                 ],
             });
 
@@ -66,18 +66,17 @@ module.exports = {
                 .setTitle('Officer Role Approval Needed')
                 .addFields(
                     { name: 'Club', value: clubName, inline: true },
-                    { name: 'Member', value: `${member.user.tag} (${member.id})`, inline: true },
+                    { name: 'Member', value: `${memberMention.user.tag} (${memberMention.id})`, inline: true },
                     { name: 'IRL Name', value: irlName, inline: false },
                     { name: 'Instructions', value: `Admins can use \`${configHandler.getPrefix(message.guild.id)}approve @member <role>\` or \`${configHandler.getPrefix(message.guild.id)}reject <reason>\`.` }
                 )
                 .setTimestamp();
 
-            ticketChannel.send({ embeds: [embed] });
-
-            message.reply(`Ticket channel created: ${ticketChannel}`);
+            await ticketChannel.send({ embeds: [embed] });
+            message.reply(`✅ Ticket channel created: ${ticketChannel}`);
         } catch (error) {
             console.error('Error creating ticket channel:', error);
-            message.reply('An error occurred while creating the ticket channel.');
+            message.reply('❌ An error occurred while creating the ticket channel.');
         }
     },
 };

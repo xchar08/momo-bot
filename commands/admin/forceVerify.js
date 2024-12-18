@@ -1,5 +1,3 @@
-// commands/admin/forceVerify.js
-
 const ms = require('ms'); // To handle time durations
 
 module.exports = {
@@ -48,11 +46,10 @@ module.exports = {
             // Assign the club role
             let clubRole = message.guild.roles.cache.find(role => role.name.toLowerCase() === `club-${clubName}`);
             if (!clubRole) {
-                // If the club role doesn't exist, create it
                 clubRole = await message.guild.roles.create({
                     name: `Club-${clubName}`,
-                    color: 'Blue', // Customize as needed
-                    permissions: [] // Define necessary permissions if needed
+                    color: 'Blue',
+                    permissions: [],
                 });
             }
             await memberMention.roles.add(clubRole);
@@ -70,44 +67,35 @@ module.exports = {
 
             await memberMention.roles.add(verificationRole);
 
-            // Schedule role removal after the duration
+            // Calculate expiration and store in tempVerifications
             const durationMs = ms(duration);
             if (isNaN(durationMs)) {
                 return message.reply('❌ Invalid duration format. Please use formats like `1d`, `12h`, `30m`.');
             }
 
+            const expiration = Date.now() + durationMs;
+            client.tempVerifications.push({
+                member: memberMention,
+                club: clubName,
+                position: position,
+                expiration: expiration,
+            });
+
+            // Schedule automatic removal
             setTimeout(async () => {
-                try {
-                    // Remove club role and verification role
-                    if (clubRole && memberMention.roles.cache.has(clubRole.id)) {
-                        await memberMention.roles.remove(clubRole);
-                    }
-
-                    if (verificationRole && memberMention.roles.cache.has(verificationRole.id)) {
-                        await memberMention.roles.remove(verificationRole);
-                    }
-
-                    // Remove member from club
-                    configHandler.removeMemberFromClub(clubName, memberMention.id);
-
-                    // Assign unverified role
-                    const unverifiedRoleId = configHandler.getUnverifiedRole();
-                    if (unverifiedRoleId) {
-                        const unverifiedRole = message.guild.roles.cache.get(unverifiedRoleId);
-                        if (unverifiedRole && !memberMention.roles.cache.has(unverifiedRole.id)) {
-                            await memberMention.roles.add(unverifiedRole);
-                        }
-                    }
-
-                    message.channel.send(`🔄 ${memberMention.user.tag} has been automatically unverified after the override duration.`);
-                } catch (err) {
-                    console.error(`Error during automatic unverification:`, err);
+                const index = client.tempVerifications.findIndex(v => v.member.id === memberMention.id && v.club === clubName);
+                if (index > -1) {
+                    client.tempVerifications.splice(index, 1);
                 }
+                // Remove roles and unverify member
+                await memberMention.roles.remove(clubRole);
+                await memberMention.roles.remove(verificationRole);
+                configHandler.removeMemberFromClub(clubName, memberMention.id);
             }, durationMs);
 
             message.channel.send(`✅ <@${memberMention.id}> has been forcefully verified in club "${clubName}" as "${position}" for ${ms(durationMs, { long: true })}. They will be unverified automatically after this duration.`);
         } catch (error) {
-            console.error(`Error during force verification:`, error);
+            console.error('Error during force verification:', error);
             message.reply(`❌ An error occurred during force verification: ${error.message}`);
         }
     },

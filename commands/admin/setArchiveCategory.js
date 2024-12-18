@@ -1,8 +1,8 @@
 const configHandler = require('../../config/configHandler');
 
 module.exports = {
-    name: 'setcollabcategory',
-    description: 'Sets the collaboration category for the server.',
+    name: 'setarchivecategory',
+    description: 'Sets the archive category for the server.',
     category: 'Admin',
     async execute(message, args, client) {
         // Check if the user has the admin role
@@ -17,7 +17,7 @@ module.exports = {
 
         // Validate command arguments
         if (args.length < 1) {
-            return message.reply('❌ Please specify the name of the category.\nUsage: `!setcollabcategory <category name>`');
+            return message.reply('❌ Please specify the name of the category.\nUsage: `!setarchivecategory <category name>`');
         }
 
         const categoryName = args.join(' '); // Combine arguments for multi-word names
@@ -32,7 +32,7 @@ module.exports = {
         }
 
         // Save the category name in the config
-        configHandler.setCollabCategory(category.name);
-        message.reply(`✅ Collaboration category has been set to "${category.name}".`);
+        configHandler.setArchiveCategory(category.name);
+        message.reply(`✅ Archive category has been set to "${category.name}".`);
     },
 };

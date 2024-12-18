@@ -21,6 +21,9 @@ const client = new Client({
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
+// Initialize temporary verification storage
+client.tempVerifications = [];
+
 // Initialize a Collection to store commands
 client.commands = new Collection();
 

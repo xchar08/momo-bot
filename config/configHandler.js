@@ -25,7 +25,8 @@ if (fs.existsSync(configPath)) {
         clubs: {},
         adminRole: "",
         archiveCategoryId: "",
-        collabCategoryId: ""
+        collabCategoryId: "",
+        ticketCategoryId: "" // Added ticket category for ticket-related commands
     };
     fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
     console.log('Created default config.json');
@@ -91,7 +92,7 @@ module.exports = {
 
     // Clubs
     addClub: (clubName) => {
-        initializeClub(clubName); // Ensure structure
+        initializeClub(clubName);
     },
     removeClub: (clubName) => {
         if (config.clubs[clubName]) {
@@ -102,7 +103,7 @@ module.exports = {
         }
     },
     assignMemberToClub: (clubName, position, userId) => {
-        initializeClub(clubName); // Ensure structure
+        initializeClub(clubName);
         const club = config.clubs[clubName];
         if (Object.keys(club.members).length >= club.maxMembers) {
             throw new Error(`Club "${clubName}" is full.`);
@@ -114,7 +115,7 @@ module.exports = {
         saveConfig();
     },
     removeMemberFromClub: (clubName, userId) => {
-        initializeClub(clubName); // Ensure structure
+        initializeClub(clubName);
         const club = config.clubs[clubName];
         for (const [position, memberId] of Object.entries(club.members)) {
             if (memberId === userId) {
@@ -126,7 +127,7 @@ module.exports = {
         throw new Error(`User is not a member of club "${clubName}".`);
     },
     getClubMembers: (clubName) => {
-        initializeClub(clubName); // Ensure structure
+        initializeClub(clubName);
         return config.clubs[clubName].members;
     },
     getAllClubs: () => config.clubs,
@@ -142,6 +143,13 @@ module.exports = {
         saveConfig();
     },
     getCollabCategory: () => config.collabCategoryId,
+
+    // Ticket Category
+    setTicketCategory: (categoryId) => {
+        config.ticketCategoryId = categoryId;
+        saveConfig();
+    },
+    getTicketCategory: () => config.ticketCategoryId,
 
     // Counting Channels
     getCountingChannels: (guildId) => config.countingChannels[guildId] || [],
