@@ -7,14 +7,15 @@ module.exports = {
     description: 'Lists all available commands.',
     category: 'General',
     async execute(message, args, client) {
-        const prefix = configHandler.getPrefix(message.guild.id);
+        const guildId = message.guild.id;
+        const prefix = configHandler.getPrefix(guildId);
 
         const embed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('📚 Bot Commands')
             .setDescription('Here is a list of all available commands:')
             .setTimestamp()
-            .setFooter({ text: 'Bot by YourName' });
+            .setFooter({ text: 'momo-bot by YourName' });
 
         // Dynamically categorize commands
         const categories = {};
@@ -31,7 +32,7 @@ module.exports = {
         }
 
         // **Add Presets Information**
-        const logChannelId = configHandler.getLogChannel(message.guild.id);
+        const logChannelId = configHandler.getLogChannel(guildId);
         const logChannel = logChannelId ? `<#${logChannelId}>` : 'Not Set';
         const adminRoleName = configHandler.getAdminRole() || 'Not Set';
         const verificationRoleName = configHandler.getVerificationRole() || 'Not Set';
@@ -39,14 +40,14 @@ module.exports = {
         const collabCategoryId = configHandler.getCollabCategory() ? `<#${configHandler.getCollabCategory()}>` : 'Not Set';
 
         // **Add Counting Game Information**
-        const countingChannels = configHandler.getCountingChannels(message.guild.id);
+        const countingChannels = configHandler.getCountingChannels(guildId);
         const countingChannelsFormatted = countingChannels.length > 0
             ? countingChannels.map(id => `<#${id}>`).join(', ')
             : 'No counting channels set.';
 
         embed.addFields(
             {
-                name: '📁 Current Presets',
+                name: '📁 Current Configurations',
                 value: `**Log Channel:** ${logChannel}\n**Admin Role:** ${adminRoleName}\n**Verification Role:** ${verificationRoleName}\n**Archive Category:** ${archiveCategoryId}\n**Collaboration Category:** ${collabCategoryId}`,
                 inline: false
             },
@@ -59,7 +60,7 @@ module.exports = {
                 name: '📚 Clubs',
                 value: Object.keys(configHandler.getAllClubs()).length > 0
                     ? Object.entries(configHandler.getAllClubs()).map(([club, details]) =>
-                        `**${club}** - Max Officers: ${details.maxOfficers}, Officer Roles: ${details.officerRoles.join(', ')}, Additional Roles: ${details.additionalRoles.join(', ')}`
+                        `**${club}** - Officer Role: ${details.officerRole}, Additional Roles: ${details.additionalRoles.length > 0 ? details.additionalRoles.join(', ') : 'None'}`
                     ).join('\n')
                     : 'No clubs configured.',
                 inline: false

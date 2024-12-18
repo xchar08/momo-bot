@@ -1,7 +1,13 @@
 {
-    "prefixes": {},
-    "logChannels": {},
-    "countingChannels": {},
+    "prefixes": {
+        "your-guild-id": "!"
+    },
+    "logChannels": {
+        "your-guild-id": ""
+    },
+    "countingChannels": {
+        "your-guild-id": []
+    },
     "countingModes": {},
     "countingCounts": {},
     "verificationRole": "",

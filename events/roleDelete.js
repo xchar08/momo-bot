@@ -1,25 +1,28 @@
 // roleDelete.js
-const { EmbedBuilder } = require('discord.js');
+const configHandler = require('../config/configHandler');
 
 module.exports = {
     name: 'roleDelete',
     async execute(role, client) {
-        const configHandler = require('../config/configHandler');
-        const logChannelId = configHandler.getLogChannel(role.guild.id);
-        if (!logChannelId) return;
+        // Define the naming convention used for club roles
+        const clubRolePrefix = 'Club-';
 
-        const logChannel = role.guild.channels.cache.get(logChannelId);
-        if (!logChannel) return;
+        if (role.name.startsWith(clubRolePrefix)) {
+            const clubName = role.name.substring(clubRolePrefix.length).trim();
 
-        const embed = new EmbedBuilder()
-            .setColor('#FF0000')
-            .setTitle('Role Deleted')
-            .addFields(
-                { name: 'Role', value: `${role.name} (${role.id})`, inline: true },
-                { name: 'Color', value: role.hexColor, inline: true }
-            )
-            .setTimestamp();
+            // Remove the club from config.json
+            configHandler.removeClub(clubName);
+            console.log(`Removed club "${clubName}" from config due to role deletion.`);
+        }
 
-        logChannel.send({ embeds: [embed] });
+        // Additionally, check if a deleted role is an officer role and handle accordingly
+        const allClubs = configHandler.getAllClubs();
+        for (const [clubName, clubConfig] of Object.entries(allClubs)) {
+            if (clubConfig.officerRole === role.name) {
+                // Optionally, notify admins or handle officer role deletion
+                configHandler.removeOfficerRole(clubName);
+                console.log(`Officer role "${role.name}" for club "${clubName}" was deleted. Updated config.`);
+            }
+        }
     },
 };

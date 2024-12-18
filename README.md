@@ -1,124 +1,103 @@
-# Discord Bot
+# momo-bot
 
-A comprehensive and organized Discord bot built with `discord.js`.
+**momo-bot** is a versatile Discord bot designed to manage club roles, facilitate user verification, and provide interactive features like counting games. It dynamically handles club configurations, ensuring flexibility and scalability within your Discord server.
 
-## Features
+## 📖 Table of Contents
 
-- **Verification System**: Assigns roles and updates nicknames upon verification.
-- **Admin Configurations**: Set admin and verification roles, log channels, archive and collaboration categories, and custom command prefixes via commands.
-- **Club Management**: Add new clubs with specific configurations, including officer roles and additional roles.
-- **Collaboration Channels**: Create temporary collaboration channels for planning events or divisions.
-- **Ticket System**: Create ticket channels for admin approval of officer roles.
-- **Logging System**: Logs various events like message deletions, edits, role changes, and channel creations/deletions.
-- **Override Mechanism**: Temporarily assign officer roles beyond the set limit.
-- **Counting Game**: Engage in a fun counting game with multiple counting modes.
-- **Utility Commands**: Ping command to check bot responsiveness and a command to list all available commands.
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Dynamic Configuration Commands](#dynamic-configuration-commands)
+- [Available Commands](#available-commands)
+  - [Admin Commands](#admin-commands)
+  - [General Commands](#general-commands)
+- [Best Practices](#best-practices)
+- [Security](#security)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Setup Instructions
+## 🎯 Features
 
-1. **Clone the Repository**
+- **Dynamic Club Management:** Automatically manages clubs based on role creation, simplifying the process of adding or removing clubs.
+- **User Verification:** Allows users to verify for specific clubs and assigns corresponding roles.
+- **Counting Games:** Facilitates interactive counting games across designated channels.
+- **Logging:** Logs important actions and events for auditing purposes.
+- **Role Configuration:** Admins can dynamically set roles and categories via commands.
+
+## 🔧 Prerequisites
+
+Before setting up **momo-bot**, ensure you have the following:
+
+- **Node.js:** Version 16.6.0 or higher.
+- **npm:** Node package manager.
+- **Discord Bot Token:** Create a bot via the [Discord Developer Portal](https://discord.com/developers/applications).
+
+## 🚀 Installation
+
+1. **Clone the Repository:**
 
     ```bash
     git clone https://github.com/xchar08/momo-bot.git
     cd momo-bot
     ```
 
-2. **Install Dependencies**
+2. **Install Dependencies:**
 
     ```bash
     npm install
     ```
 
-3. **Configure Environment Variables**
+3. **Set Up Environment Variables:**
 
-    - Ensure you have a `.env` file set up with your Discord bot token and desired prefix.
+    - Rename `.env.example` to `.env`:
 
-4. **Configure the Bot**
+        ```bash
+        cp .env.example .env
+        ```
 
-    - Use the available admin commands to set roles, channels, categories, and add clubs.
+    - Open `.env` and add your Discord bot token:
 
-5. **Start the Bot**
+        ```env
+        DISCORD_TOKEN=your-discord-bot-token-here
+        DEFAULT_PREFIX=!
+        ```
+
+4. **Run the Bot:**
 
     ```bash
-    npm start
+    node index.js
     ```
 
-## Commands Overview
+    Or, if using nodemon for development:
 
-### **Admin Commands**
+    ```bash
+    npx nodemon index.js
+    ```
 
-- `!setadminrole @role`: Sets the admin role.
-- `!setverifrole @role`: Sets the verification role.
-- `!setlogchannel #channel`: Sets the log channel.
-- `!setarchivecategory #category`: Sets the archive category.
-- `!setcollabcategory #category`: Sets the collaboration category.
-- `!setprefix <new_prefix>`: Sets a custom command prefix.
-- `!addclub <club name> <max officers> <officer roles (comma-separated)> <additional roles (comma-separated)>`: Adds a new club.
-- `!setcountingchannel add #channel`: Adds a channel as a counting channel.
-- `!setcountingchannel remove #channel`: Removes a channel from counting channels.
-- `!setcountingchannel list`: Lists all counting channels.
-- `!setcountingmode #channel <mode>`: Sets the counting mode for a counting channel.
+## 🛠 Configuration
 
-### **General Commands**
+### 📄 Initial `config.json`
 
-- `!ping`: Checks bot latency.
-- `!commands`: Lists all available commands.
+Upon the first run, a `config.json` file will be generated in the `config/` directory with the following structure:
 
-### **Club Commands**
-
-- `!addclub <club name> <max officers> <officer roles (comma-separated)> <additional roles (comma-separated)>`: Adds a new club.
-
-### **Collaboration Commands**
-
-- `!collab <club name(s)> <event or division name>`: Creates a collaboration channel.
-
-### **Ticket Commands**
-
-- `!ticket <club name> @member <IRL name>`: Creates a ticket channel for approvals.
-
-### **Override Commands**
-
-- `!override <club name> @member <club role> <IRL name>`: Temporarily assigns officer roles beyond limits.
-
-### **Counting Game Commands**
-
-- **Set Counting Channel:**
-    - `!setcountingchannel add #channel`: Adds a channel as a counting channel.
-    - `!setcountingchannel remove #channel`: Removes a channel from counting channels.
-    - `!setcountingchannel list`: Lists all counting channels.
-
-- **Set Counting Mode:**
-    - `!setcountingmode #channel <mode>`: Sets the counting mode for a counting channel.
-    - **Available Modes:** `normal`, `hex`, `binary`, `count2`, `count3`, `count4`, `count5`, `countdown`
-
-## Permissions Required
-
-Ensure your bot has the following permissions in your Discord server:
-
-- Manage Roles
-- Manage Channels
-- Send Messages
-- Read Message History
-- View Channels
-- Change Nickname
-- Add Reactions
-- Manage Messages (if auto-deleting messages in counting channels)
-
-## Counting Game Modes
-
-1. **Normal:** Count by 1 (1, 2, 3, ...)
-2. **Hexadecimal:** Count in hexadecimal (1, 2, 3, ..., A, B, C, ...)
-3. **Binary:** Count in binary (1, 10, 11, 100, ...)
-4. **Count by 2s:** 1, 3, 5, 7, ...
-5. **Count by 3s:** 1, 4, 7, 10, ...
-6. **Count by 4s:** 1, 5, 9, 13, ...
-7. **Count by 5s:** 1, 6, 11, 16, ...
-8. **Countdown from 1000:** 1000, 999, 998, ...
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or feature additions.
-
-## License
-
-This project is licensed under the MIT License.
+```json
+{
+    "prefixes": {
+        "your-guild-id": "!"
+    },
+    "logChannels": {
+        "your-guild-id": ""
+    },
+    "countingChannels": {
+        "your-guild-id": []
+    },
+    "countingModes": {},
+    "countingCounts": {},
+    "verificationRole": "",
+    "clubs": {},
+    "adminRole": "",
+    "archiveCategoryId": "",
+    "collabCategoryId": ""
+}
