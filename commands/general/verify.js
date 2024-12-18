@@ -1,5 +1,3 @@
-// commands/admin/verify.js
-
 module.exports = {
     name: 'verify',
     description: 'Verifies a member by assigning them a club and position.',
@@ -59,8 +57,8 @@ module.exports = {
                 // If the club role doesn't exist, create it
                 clubRole = await message.guild.roles.create({
                     name: `Club-${clubName}`,
-                    color: 'Blue', // Customize as needed or make it configurable
-                    permissions: [] // Define necessary permissions if needed
+                    color: 'Blue', // Customize as needed
+                    permissions: []
                 });
             }
             await memberMention.roles.add(clubRole);
@@ -78,7 +76,14 @@ module.exports = {
 
             await memberMention.roles.add(verificationRole);
 
-            // Optionally, store the IRL name in a separate system if needed
+            // Remove the unverified role
+            const unverifiedRoleId = configHandler.getUnverifiedRole();
+            if (unverifiedRoleId) {
+                const unverifiedRole = message.guild.roles.cache.get(unverifiedRoleId);
+                if (unverifiedRole && memberMention.roles.cache.has(unverifiedRole.id)) {
+                    await memberMention.roles.remove(unverifiedRole);
+                }
+            }
 
             message.channel.send(`✅ <@${memberMention.id}> has been verified and assigned to the "${clubName}" club in the "${position}" position. IRL Name: ${irlName}`);
         } catch (error) {
