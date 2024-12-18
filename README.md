@@ -88,7 +88,7 @@ Ensure the following before installation:
 
 On the first run, the bot generates a `config.json` file in the `config/` directory with the following structure:
 
-\`\`\`json
+```json
 {
     "prefixes": {
         "your-guild-id": "!"
@@ -108,7 +108,7 @@ On the first run, the bot generates a `config.json` file in the `config/` direct
     "collabCategoryId": "",
     "ticketCategoryId": ""
 }
-\`\`\`
+```
 
 Admins can dynamically update these configurations using commands.
 
