@@ -1,6 +1,6 @@
 # momo-bot
 
-**momo-bot** is a versatile Discord bot designed to manage club roles, facilitate user verification, and provide interactive features like counting games. It dynamically handles club configurations, ensuring flexibility and scalability within your Discord server.
+**momo-bot** is a multi-functional Discord bot designed for seamless club role management, user verification, and interactive features like counting games. The bot dynamically handles club configurations, ensuring ease of use and adaptability for your Discord server.
 
 ## 📖 Table of Contents
 
@@ -12,27 +12,31 @@
 - [Available Commands](#available-commands)
   - [Admin Commands](#admin-commands)
   - [General Commands](#general-commands)
+  - [Collaboration Commands](#collaboration-commands)
+  - [Ticket Commands](#ticket-commands)
 - [Best Practices](#best-practices)
-- [Security](#security)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## 🎯 Features
 
-- **Dynamic Club Management:** Automatically manages clubs based on role creation, simplifying the process of adding or removing clubs.
-- **User Verification:** Allows users to verify for specific clubs and assigns corresponding roles.
-- **Counting Games:** Facilitates interactive counting games across designated channels.
-- **Logging:** Logs important actions and events for auditing purposes.
-- **Role Configuration:** Admins can dynamically set roles and categories via commands.
+- **Dynamic Club Management:** Automatically manages clubs and their roles based on configuration.
+- **User Verification:** Verifies users for clubs, assigning them specific roles dynamically.
+- **Temporary Role Verification:** Temporarily verifies users with expiration functionality.
+- **Collaboration Channels:** Creates temporary channels for club events and divisions with configurable permissions.
+- **Ticketing System:** Facilitates ticket creation for role approvals, with easy approval/rejection handling.
+- **Interactive Counting Games:** Manages counting channels with various modes for server engagement.
+- **Logging:** Logs important events for server management.
+- **Dynamic Role and Category Configuration:** Admins can set roles and categories through commands.
 
 ## 🔧 Prerequisites
 
-Before setting up **momo-bot**, ensure you have the following:
+Ensure the following before installation:
 
-- **Node.js:** Version 16.9.0 or higher (preferably LTS like v18.x).
+- **Node.js:** Version 16.9.0 or higher (preferably LTS).
 - **npm:** Node package manager.
-- **Discord Bot Token:** Create a bot via the [Discord Developer Portal](https://discord.com/developers/applications).
+- **Discord Bot Token:** Create one via the [Discord Developer Portal](https://discord.com/developers/applications).
 
 ## 🚀 Installation
 
@@ -49,8 +53,6 @@ Before setting up **momo-bot**, ensure you have the following:
     npm install
     ```
 
-    **Note:** If you encounter errors related to Husky during this step, refer to the [Fixing Husky Installation Error](#fixing-husky-installation-error) section below.
-
 3. **Set Up Environment Variables:**
 
     - **Create `.env` File:**
@@ -61,60 +63,32 @@ Before setting up **momo-bot**, ensure you have the following:
 
     - **Edit `.env`:**
 
-        Open `.env` and add your Discord bot token and desired prefix.
-
         ```env
         DISCORD_TOKEN=your-discord-bot-token-here
         DEFAULT_PREFIX=!
         ```
 
-4. **Set Up Husky Git Hooks:**
+4. **Run the Bot:**
 
-    Husky ensures that certain scripts (like linting) run before commits to maintain code quality.
-
-    ```bash
-    npm run prepare
-    ```
-
-    - **Add Pre-Commit Hook:**
-
-        ```bash
-        npx husky add .husky/pre-commit "npm run lint"
-        ```
-
-    - **This Hook Will:**
-        - Run ESLint before each commit.
-        - Prevent commits if linting errors are detected.
-
-5. **Run the Bot:**
-
-    - **Development Mode (with `nodemon`):**
+    - **Development Mode:**
 
         ```bash
         npm run dev
         ```
 
-        *Benefits:*
-        - Automatically restarts the bot when file changes are detected.
-        - Useful for development and testing.
-
     - **Production Mode:**
 
         ```bash
-        npm run start
+        npm start
         ```
-
-        *Benefits:*
-        - Runs the bot without the overhead of monitoring file changes.
-        - Suitable for deployment environments.
 
 ## 🛠 Configuration
 
 ### 📄 Initial `config.json`
 
-Upon the first run, a `config.json` file will be generated in the `config/` directory with the following structure:
+On the first run, the bot generates a `config.json` file in the `config/` directory with the following structure:
 
-```json
+\`\`\`json
 {
     "prefixes": {
         "your-guild-id": "!"
@@ -127,8 +101,6 @@ Upon the first run, a `config.json` file will be generated in the `config/` dire
     },
     "countingModes": {},
     "countingCounts": {},
-    "countingModes": {},
-    "countingCounts": {},
     "verificationRole": "",
     "unverifiedRole": "",
     "adminRole": "",
@@ -136,4 +108,68 @@ Upon the first run, a `config.json` file will be generated in the `config/` dire
     "collabCategoryId": "",
     "ticketCategoryId": ""
 }
-```
+\`\`\`
+
+Admins can dynamically update these configurations using commands.
+
+---
+
+## 📜 Available Commands
+
+### 🛡️ Admin Commands
+
+- `!addclub <clubName>`: Adds a new club.
+- `!removeclub <clubName>`: Removes an existing club.
+- `!setadminrole <@role>`: Sets the admin role.
+- `!setarchivecategory <categoryName>`: Sets the archive category.
+- `!setcollabcategory <categoryName>`: Sets the collaboration category.
+- `!setticketcategory <categoryName>`: Sets the ticket category.
+- `!setverifrole <@role>`: Sets the verification role.
+- `!setunverifrole <@role>`: Sets the unverified role.
+- `!forceverify @user <clubName> <position> <realName> [duration]`: Temporarily verifies a user with optional duration.
+- `!checkdurations`: Lists all temporary verifications and their expiration times.
+- `!unverify @user`: Unverifies a member by removing their club and verification roles.
+
+### 📋 General Commands
+
+- `!commands`: Lists all available commands.
+- `!ping`: Responds with Pong!
+
+### 🤝 Collaboration Commands
+
+- `!collab <club1,club2,...> <eventName>`: Creates a collaboration channel involving specified clubs.
+- `!close`: Archives the current collaboration channel.
+
+### 📩 Ticket Commands
+
+- `!ticket <clubName> @user <realName>`: Creates a ticket for role approval.
+- `!approve @user <role>`: Approves a ticket and assigns the specified role.
+- `!reject <reason>`: Rejects a ticket with a reason.
+
+---
+
+## 🛡️ Best Practices
+
+- **Use Appropriate Permissions:** Ensure the bot has the necessary permissions to manage roles and channels.
+- **Set Admin Roles:** Use `!setadminrole` to assign admin privileges.
+- **Audit Logs:** Regularly check the logs for any unusual activity.
+
+---
+
+## 🛠 Troubleshooting
+
+- **Permission Issues:** Verify that the bot's role is higher than the roles it is managing.
+- **Configuration Errors:** Use `!commands` to verify the current configuration.
+- **Bot Not Responding:** Restart the bot and check `.env` for correct credentials.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Feel free to submit issues or pull requests on the GitHub repository.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
