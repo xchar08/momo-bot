@@ -127,10 +127,13 @@ Upon the first run, a `config.json` file will be generated in the `config/` dire
     },
     "countingModes": {},
     "countingCounts": {},
+    "countingModes": {},
+    "countingCounts": {},
     "verificationRole": "",
-    "clubs": {},
+    "unverifiedRole": "",
     "adminRole": "",
     "archiveCategoryId": "",
-    "collabCategoryId": ""
+    "collabCategoryId": "",
+    "ticketCategoryId": ""
 }
 ```
