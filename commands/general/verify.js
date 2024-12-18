@@ -1,18 +1,19 @@
 module.exports = {
     name: 'verify',
     description: 'Verifies a member by assigning them a club and position.',
-    category: 'Admin',
+    category: 'General',
     async execute(message, args, client) {
         const configHandler = client.configHandler;
 
-        // Check if the user has the admin role
-        const adminRoleId = configHandler.getAdminRole();
-        if (adminRoleId) {
-            if (!message.member.roles.cache.has(adminRoleId)) {
-                return message.reply('❌ You do not have permission to use this command.');
-            }
-        } else {
-            return message.reply('❌ Admin role is not set. Please set it using the `!setadminrole` command.');
+        // Check if the user has the verification role
+        const verificationRoleId = configHandler.getVerificationRole();
+        if (!verificationRoleId) {
+            return message.reply('❌ Verification role is not set. Please set it using the `!setverifrole` command.');
+        }
+
+        const hasVerifyRole = message.member.roles.cache.has(verificationRoleId);
+        if (!hasVerifyRole) {
+            return message.reply('❌ You do not have permission to use this command. You need the verification role.');
         }
 
         // Parse arguments
@@ -57,23 +58,17 @@ module.exports = {
                 // If the club role doesn't exist, create it
                 clubRole = await message.guild.roles.create({
                     name: `Club-${clubName}`,
-                    color: 'Blue', // Customize as needed
+                    color: 'Blue',
                     permissions: []
                 });
             }
             await memberMention.roles.add(clubRole);
 
             // Assign the verification role
-            const verificationRoleId = configHandler.getVerificationRole();
-            if (!verificationRoleId) {
-                return message.reply('❌ Verification role is not set. Please set it using the `!setverifrole` command.');
-            }
-
             const verificationRole = message.guild.roles.cache.get(verificationRoleId);
             if (!verificationRole) {
                 return message.reply('❌ Verification role does not exist. Please contact an administrator.');
             }
-
             await memberMention.roles.add(verificationRole);
 
             // Remove the unverified role

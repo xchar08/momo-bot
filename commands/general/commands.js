@@ -27,9 +27,8 @@ module.exports = {
             .setDescription('Here is a list of all available commands:')
             .addFields(
                 {
-                    name: '**Admin**',
+                    name: '🎩 **Admin**',
                     value: `\`${prefix}addclub\`: Adds a new club to the configuration.\n` +
-                        `\`${prefix}forceverify\`: Forcefully verifies a member, allowing clubs to exceed their member limit temporarily.\n` +
                         `\`${prefix}setadminrole\`: Sets the admin role.\n` +
                         `\`${prefix}setarchivecategory\`: Sets the archive category for the server.\n` +
                         `\`${prefix}setcollabcategory\`: Sets the collaboration category for the server.\n` +
@@ -38,21 +37,22 @@ module.exports = {
                         `\`${prefix}setcountingmode\`: Sets the counting mode for a counting channel.\n` +
                         `\`${prefix}setlogchannel\`: Sets the log channel for the server.\n` +
                         `\`${prefix}setprefix\`: Sets a new command prefix.\n` +
-                        `\`${prefix}setverifrole\`: Sets the verification role.\n` +
-                        `\`${prefix}unverify\`: Unverifies a member by removing their club and verification roles.\n` +
-                        `\`${prefix}verify\`: Verifies a member by assigning them a club and position.`
+                        `\`${prefix}setverifrole\`: Sets the verification role.` 
                 },
                 {
-                    name: '**Collaboration**',
+                    name: '🫂 **Collaboration**',
                     value: `\`${prefix}collab <club1,club2,...> <event>\`: Creates a temporary collaboration channel for planning events or divisions.`
                 },
                 {
-                    name: '**General**',
+                    name: '🧬 **General**',
                     value: `\`${prefix}commands\`: Lists all available commands.\n` +
-                        `\`${prefix}ping\`: Replies with Pong!`
+                        `\`${prefix}ping\`: Replies with Pong!\n` +
+                        `\`${prefix}verify\`: Verifies a member by assigning them a club and position.\n` +
+                        `\`${prefix}forceverify\`: Forcefully verifies a member, allowing clubs to exceed their member limit temporarily.\n` +
+                        `\`${prefix}unverify\`: Unverifies a member by removing their club and verification roles.` 
                 },
                 {
-                    name: '**Ticket**',
+                    name: '🎟️ **Ticket**',
                     value: `\`${prefix}ticket <club> @member <IRL name>\`: Creates a ticket channel for admin approval of officer roles.\n` +
                         `\`${prefix}approve @member <role>\`: Approves the ticket and assigns the role.\n` +
                         `\`${prefix}reject <reason>\`: Rejects the ticket with a specified reason.`

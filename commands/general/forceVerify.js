@@ -3,18 +3,19 @@ const ms = require('ms'); // To handle time durations
 module.exports = {
     name: 'forceverify',
     description: 'Forcefully verifies a member, allowing clubs to exceed their member limit temporarily.',
-    category: 'Admin',
+    category: 'General',
     async execute(message, args, client) {
         const configHandler = client.configHandler;
 
-        // Check if the user has the admin role
-        const adminRoleId = configHandler.getAdminRole();
-        if (adminRoleId) {
-            if (!message.member.roles.cache.has(adminRoleId)) {
-                return message.reply('❌ You do not have permission to use this command.');
-            }
-        } else {
-            return message.reply('❌ Admin role is not set. Please set it using the `!setadminrole` command.');
+        // Check if the user has the verification role
+        const verificationRoleId = configHandler.getVerificationRole();
+        if (!verificationRoleId) {
+            return message.reply('❌ Verification role is not set. Please set it using the `!setverifrole` command.');
+        }
+
+        const hasVerifyRole = message.member.roles.cache.has(verificationRoleId);
+        if (!hasVerifyRole) {
+            return message.reply('❌ You do not have permission to use this command. You need the verification role.');
         }
 
         // Parse arguments
@@ -40,6 +41,13 @@ module.exports = {
                 return message.reply(`❌ Club "${clubName}" does not exist. Please create it using the \`!addclub\` command.`);
             }
 
+            // Validate duration and enforce a maximum of 24 hours
+            const durationMs = ms(duration);
+            const maxDurationMs = ms('24h'); // 24 hours in milliseconds
+            if (isNaN(durationMs) || durationMs > maxDurationMs) {
+                return message.reply('❌ Invalid duration or exceeds the maximum allowed duration of 24 hours. Use formats like `1h`, `12h`, `24h`.');
+            }
+
             // Assign the member to the position in the club, bypassing the member limit
             configHandler.assignMemberToClub(clubName, position, memberMention.id);
 
@@ -55,11 +63,6 @@ module.exports = {
             await memberMention.roles.add(clubRole);
 
             // Assign the verification role
-            const verificationRoleId = configHandler.getVerificationRole();
-            if (!verificationRoleId) {
-                return message.reply('❌ Verification role is not set. Please set it using the `!setverifrole` command.');
-            }
-
             const verificationRole = message.guild.roles.cache.get(verificationRoleId);
             if (!verificationRole) {
                 return message.reply('❌ Verification role does not exist. Please contact an administrator.');
@@ -68,11 +71,6 @@ module.exports = {
             await memberMention.roles.add(verificationRole);
 
             // Calculate expiration and store in tempVerifications
-            const durationMs = ms(duration);
-            if (isNaN(durationMs)) {
-                return message.reply('❌ Invalid duration format. Please use formats like `1d`, `12h`, `30m`.');
-            }
-
             const expiration = Date.now() + durationMs;
             client.tempVerifications.push({
                 member: memberMention,
@@ -91,6 +89,7 @@ module.exports = {
                 await memberMention.roles.remove(clubRole);
                 await memberMention.roles.remove(verificationRole);
                 configHandler.removeMemberFromClub(clubName, memberMention.id);
+                message.channel.send(`❌ <@${memberMention.id}> has been automatically unverified from club "${clubName}".`);
             }, durationMs);
 
             message.channel.send(`✅ <@${memberMention.id}> has been forcefully verified in club "${clubName}" as "${position}" for ${ms(durationMs, { long: true })}. They will be unverified automatically after this duration.`);

@@ -1,20 +1,19 @@
-// commands/admin/unverify.js
-
 module.exports = {
     name: 'unverify',
     description: 'Unverifies a member by removing their club and verification roles and assigning the unverified role.',
-    category: 'Admin',
+    category: 'General',
     async execute(message, args, client) {
         const configHandler = client.configHandler;
 
-        // Check if the user has the admin role
-        const adminRoleId = configHandler.getAdminRole();
-        if (adminRoleId) {
-            if (!message.member.roles.cache.has(adminRoleId)) {
-                return message.reply('❌ You do not have permission to use this command.');
-            }
-        } else {
-            return message.reply('❌ Admin role is not set. Please set it using the `!setadminrole` command.');
+        // Check if the user has the verification role
+        const verificationRoleId = configHandler.getVerificationRole();
+        if (!verificationRoleId) {
+            return message.reply('❌ Verification role is not set. Please set it using the `!setverifrole` command.');
+        }
+
+        const hasVerifyRole = message.member.roles.cache.has(verificationRoleId);
+        if (!hasVerifyRole) {
+            return message.reply('❌ You do not have permission to use this command. You need the verification role.');
         }
 
         // Parse arguments
