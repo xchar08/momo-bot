@@ -4,7 +4,7 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = {
     name: 'channelDelete',
     async execute(channel, client) {
-        const configHandler = require('../config/configHandler');
+        const configHandler = client.configHandler;
         const logChannelId = configHandler.getLogChannel(channel.guild.id);
         if (!logChannelId) return;
 

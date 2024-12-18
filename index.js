@@ -27,6 +27,9 @@ client.tempVerifications = [];
 // Initialize a Collection to store commands
 client.commands = new Collection();
 
+// Initialize in-memory counting storage
+client.counting = new Map();
+
 // Define the path to the commands directory
 const commandsPath = path.join(__dirname, 'commands');
 

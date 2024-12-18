@@ -1,4 +1,3 @@
-// setLogChannel.js
 const configHandler = require('../../config/configHandler');
 
 module.exports = {
@@ -7,14 +6,14 @@ module.exports = {
     category: 'Admin',
     async execute(message, args, client) {
         // Check if the user has the admin role
-        const adminRoleName = configHandler.getAdminRole();
-        if (!adminRoleName) {
-            return message.reply('Admin role is not set. Please set it using the `setadminrole` command.');
+        const adminRoleId = configHandler.getAdminRole();
+        if (!adminRoleId) {
+            return message.reply('Admin role is not set. Please set it using the `!setadminrole` command.');
         }
 
-        const adminRole = message.guild.roles.cache.find(r => r.name === adminRoleName);
+        const adminRole = message.guild.roles.cache.get(adminRoleId);
         if (!adminRole) {
-            return message.reply(`Admin role "${adminRoleName}" does not exist.`);
+            return message.reply(`Admin role with ID "${adminRoleId}" does not exist.`);
         }
 
         if (!message.member.roles.cache.has(adminRole.id)) {

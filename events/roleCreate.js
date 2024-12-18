@@ -1,34 +1,25 @@
-// events/roleCreate.js
+// events/channelDelete.js
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
-    name: 'roleCreate',
-    execute(role, client) {
+    name: 'channelDelete',
+    async execute(channel, client) {
         const configHandler = client.configHandler;
-        const clubRolePrefix = 'club-';
-        const roleNameLower = role.name.toLowerCase();
+        const logChannelId = configHandler.getLogChannel(channel.guild.id);
+        if (!logChannelId) return;
 
-        if (roleNameLower.startsWith(clubRolePrefix)) {
-            const clubName = roleNameLower.replace(clubRolePrefix, '');
+        const logChannel = channel.guild.channels.cache.get(logChannelId);
+        if (!logChannel) return;
 
-            const allClubs = configHandler.getAllClubs();
-            const clubExists = Object.keys(allClubs).includes(clubName);
+        const embed = new EmbedBuilder()
+            .setColor('#FF0000')
+            .setTitle('Channel Deleted')
+            .addFields(
+                { name: 'Channel', value: `${channel.name} (${channel.id})`, inline: true },
+                { name: 'Type', value: channel.type === 0 ? 'Text' : channel.type === 2 ? 'Voice' : 'Other', inline: true }
+            )
+            .setTimestamp();
 
-            if (!clubExists) {
-                try {
-                    configHandler.addClub(clubName);
-                    console.log(`Club "${clubName}" has been added to configuration due to role creation.`);
-                    // Optionally, notify a log channel
-                    const logChannelId = configHandler.getLogChannel(role.guild.id);
-                    if (logChannelId) {
-                        const logChannel = role.guild.channels.cache.get(logChannelId);
-                        if (logChannel) {
-                            logChannel.send(`🔔 Club "${clubName}" has been added to configuration because the role "${role.name}" was created.`);
-                        }
-                    }
-                } catch (error) {
-                    console.error(`Error adding club "${clubName}":`, error);
-                }
-            }
-        }
+        logChannel.send({ embeds: [embed] });
     },
 };

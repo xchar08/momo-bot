@@ -1,9 +1,11 @@
-// messageDelete.js
+// events/messageDelete.js
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'messageDelete',
     async execute(message, client) {
+        if (message.author.bot) return; // Exclude bots
+
         const configHandler = require('../config/configHandler');
         const logChannelId = configHandler.getLogChannel(message.guild.id);
         if (!logChannelId) return;
@@ -15,7 +17,7 @@ module.exports = {
             .setColor('#FF0000')
             .setTitle('Message Deleted')
             .addFields(
-                { name: 'Author', value: message.author ? message.author.tag : 'Unknown', inline: true },
+                { name: 'Author', value: message.author.tag, inline: true },
                 { name: 'Channel', value: message.channel.toString(), inline: true },
                 { name: 'Content', value: message.content || 'No content', inline: false }
             )

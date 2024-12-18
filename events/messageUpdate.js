@@ -1,9 +1,10 @@
-// messageUpdate.js
+// events/messageUpdate.js
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'messageUpdate',
     async execute(oldMessage, newMessage, client) {
+        if (oldMessage.author.bot || newMessage.author.bot) return; // Exclude bots
         if (oldMessage.partial || newMessage.partial) return;
         if (oldMessage.content === newMessage.content) return;
 

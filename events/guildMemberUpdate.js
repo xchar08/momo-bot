@@ -1,10 +1,12 @@
-// guildMemberUpdate.js
+// events/guildMemberUpdate.js
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'guildMemberUpdate',
     async execute(oldMember, newMember, client) {
-        const configHandler = require('../config/configHandler');
+        if (newMember.user.bot) return; // Exclude bots
+
+        const configHandler = client.configHandler;
         const logChannelId = configHandler.getLogChannel(newMember.guild.id);
         if (!logChannelId) return;
 
@@ -17,17 +19,13 @@ module.exports = {
         const addedRoles = newRoles.filter(role => !oldRoles.has(role.id));
         const removedRoles = oldRoles.filter(role => !newRoles.has(role.id));
 
-        if (addedRoles.size === 0 && removedRoles.size === 0) return; // No role changes
+        if (addedRoles.size === 0 && removedRoles.size === 0) return;
 
         const embed = new EmbedBuilder()
             .setColor('#0000FF')
             .setTitle('Member Roles Updated')
             .addFields(
-                {
-                    name: 'Member',
-                    value: `${newMember.user.tag} (${newMember.id})`,
-                    inline: true
-                }
+                { name: 'Member', value: `${newMember.user.tag} (${newMember.id})`, inline: true }
             )
             .setThumbnail(newMember.user.displayAvatarURL({ dynamic: true }))
             .setTimestamp();

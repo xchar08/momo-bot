@@ -6,18 +6,18 @@ module.exports = {
     async execute(message, args, client) {
         const configHandler = require('../../config/configHandler');
 
-        // Check if the user has the admin role
-        const adminRoleName = configHandler.getAdminRole();
-        if (!adminRoleName) {
+        // Check if the user has the admin role by ID
+        const adminRoleId = configHandler.getAdminRole();
+        if (!adminRoleId) {
             return message.reply('Admin role is not set. Please set it using the `setadminrole` command.');
         }
 
-        const adminRole = message.guild.roles.cache.find(r => r.name === adminRoleName);
+        const adminRole = message.guild.roles.cache.get(adminRoleId);
         if (!adminRole) {
-            return message.reply(`Admin role "${adminRoleName}" does not exist.`);
+            return message.reply(`Admin role with ID "${adminRoleId}" does not exist.`);
         }
 
-        if (!message.member.roles.cache.has(adminRole.id)) {
+        if (!message.member.roles.cache.has(adminRoleId)) {
             return message.reply('You do not have permission to use this command.');
         }
 
@@ -26,7 +26,11 @@ module.exports = {
         // To remove: setcountingchannel remove #channel
         // To list: setcountingchannel list
         if (args.length === 0) {
-            return message.reply(`Usage:\n\`${configHandler.getPrefix(message.guild.id)}setcountingchannel add #channel\` to add a counting channel.\n\`${configHandler.getPrefix(message.guild.id)}setcountingchannel remove #channel\` to remove a counting channel.\n\`${configHandler.getPrefix(message.guild.id)}setcountingchannel list\` to list all counting channels.`);
+            return message.reply(
+                `Usage:\n\`${configHandler.getPrefix(message.guild.id)}setcountingchannel add #channel\` to add a counting channel.\n` +
+                `\`${configHandler.getPrefix(message.guild.id)}setcountingchannel remove #channel\` to remove a counting channel.\n` +
+                `\`${configHandler.getPrefix(message.guild.id)}setcountingchannel list\` to list all counting channels.`
+            );
         }
 
         const subCommand = args[0].toLowerCase();
@@ -57,7 +61,9 @@ module.exports = {
             const channels = countingChannels.map(id => `<#${id}>`).join(', ');
             message.reply(`Counting Channels: ${channels}`);
         } else {
-            return message.reply(`Invalid subcommand. Use \`${configHandler.getPrefix(message.guild.id)}setcountingchannel add/remove/list\`.`);
+            return message.reply(
+                `Invalid subcommand. Use \`${configHandler.getPrefix(message.guild.id)}setcountingchannel add/remove/list\`.`
+            );
         }
     },
 };
