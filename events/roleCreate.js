@@ -1,44 +1,34 @@
-// roleCreate.js
-const configHandler = require('../config/configHandler');
+// events/roleCreate.js
 
 module.exports = {
     name: 'roleCreate',
-    async execute(role, client) {
-        // Define a naming convention for club roles, e.g., roles starting with "Club-"
-        const clubRolePrefix = 'Club-';
+    execute(role, client) {
+        const configHandler = client.configHandler;
+        const clubRolePrefix = 'club-';
+        const roleNameLower = role.name.toLowerCase();
 
-        if (role.name.startsWith(clubRolePrefix)) {
-            const clubName = role.name.substring(clubRolePrefix.length).trim();
+        if (roleNameLower.startsWith(clubRolePrefix)) {
+            const clubName = roleNameLower.replace(clubRolePrefix, '');
 
-            // Check if the club already exists to prevent duplicates
-            const existingClub = configHandler.getClubConfig(clubName);
-            if (existingClub) {
-                console.log(`Club "${clubName}" already exists in config.`);
-                return;
-            }
+            const allClubs = configHandler.getAllClubs();
+            const clubExists = Object.keys(allClubs).includes(clubName);
 
-            // Create a default officer role name, e.g., "ClubName Officer"
-            const officerRoleName = `${clubName} Officer`;
-
-            // Check if the officer role already exists
-            let officerRole = role.guild.roles.cache.find(r => r.name === officerRoleName);
-            if (!officerRole) {
+            if (!clubExists) {
                 try {
-                    officerRole = await role.guild.roles.create({
-                        name: officerRoleName,
-                        color: 'BLUE',
-                        reason: `Officer role for ${clubName}`,
-                    });
-                    console.log(`Created officer role "${officerRoleName}" for club "${clubName}".`);
+                    configHandler.addClub(clubName);
+                    console.log(`Club "${clubName}" has been added to configuration due to role creation.`);
+                    // Optionally, notify a log channel
+                    const logChannelId = configHandler.getLogChannel(role.guild.id);
+                    if (logChannelId) {
+                        const logChannel = role.guild.channels.cache.get(logChannelId);
+                        if (logChannel) {
+                            logChannel.send(`🔔 Club "${clubName}" has been added to configuration because the role "${role.name}" was created.`);
+                        }
+                    }
                 } catch (error) {
-                    console.error(`Error creating officer role for club "${clubName}":`, error);
-                    return;
+                    console.error(`Error adding club "${clubName}":`, error);
                 }
             }
-
-            // Add the new club to config.json
-            configHandler.addClub(clubName, officerRoleName, []);
-            console.log(`Added club "${clubName}" with officer role "${officerRoleName}" to config.`);
         }
     },
 };

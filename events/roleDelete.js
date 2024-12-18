@@ -1,27 +1,29 @@
-// roleDelete.js
-const configHandler = require('../config/configHandler');
+// events/roleDelete.js
 
 module.exports = {
     name: 'roleDelete',
-    async execute(role, client) {
-        // Define the naming convention used for club roles
-        const clubRolePrefix = 'Club-';
+    execute(role, client) {
+        const configHandler = client.configHandler;
+        const clubName = role.name.toLowerCase().replace('club-', '');
 
-        if (role.name.startsWith(clubRolePrefix)) {
-            const clubName = role.name.substring(clubRolePrefix.length).trim();
-
-            // Remove the club from config.json
-            configHandler.removeClub(clubName);
-            console.log(`Removed club "${clubName}" from config due to role deletion.`);
-        }
-
-        // Additionally, check if a deleted role is an officer role and handle accordingly
+        // Check if the deleted role corresponds to a club
         const allClubs = configHandler.getAllClubs();
-        for (const [clubName, clubConfig] of Object.entries(allClubs)) {
-            if (clubConfig.officerRole === role.name) {
-                // Optionally, notify admins or handle officer role deletion
-                configHandler.removeOfficerRole(clubName);
-                console.log(`Officer role "${role.name}" for club "${clubName}" was deleted. Updated config.`);
+        const clubExists = Object.keys(allClubs).includes(clubName);
+
+        if (clubExists) {
+            try {
+                configHandler.removeClub(clubName);
+                console.log(`Club "${clubName}" has been removed from configuration due to role deletion.`);
+                // Optionally, notify a log channel
+                const logChannelId = configHandler.getLogChannel(role.guild.id);
+                if (logChannelId) {
+                    const logChannel = role.guild.channels.cache.get(logChannelId);
+                    if (logChannel) {
+                        logChannel.send(`🔔 Club "${clubName}" has been removed from configuration because the role "${role.name}" was deleted.`);
+                    }
+                }
+            } catch (error) {
+                console.error(`Error removing club "${clubName}":`, error);
             }
         }
     },

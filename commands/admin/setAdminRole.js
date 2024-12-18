@@ -1,34 +1,33 @@
-// setAdminRole.js
-const configHandler = require('../../config/configHandler');
+// commands/admin/setAdminRole.js
 
 module.exports = {
     name: 'setadminrole',
-    description: 'Sets the admin role for the server.',
+    description: 'Sets the admin role.',
     category: 'Admin',
     async execute(message, args, client) {
-        // Check if the user has the admin role (to set admin role, user needs higher privileges)
-        const adminRoleName = configHandler.getAdminRole();
-        if (adminRoleName) {
-            const adminRole = message.guild.roles.cache.find(r => r.name === adminRoleName);
-            if (adminRole && !message.member.roles.cache.has(adminRole.id)) {
-                return message.reply('You do not have permission to use this command.');
+        const configHandler = client.configHandler;
+
+        // Check if the user has the current admin role (if already set)
+        const currentAdminRoleId = configHandler.getAdminRole();
+        if (currentAdminRoleId) {
+            if (!message.member.roles.cache.has(currentAdminRoleId)) {
+                return message.reply('❌ You do not have permission to use this command.');
             }
         }
 
-        // Command syntax: !setadminrole @Role
-        if (args.length !== 1) {
-            return message.reply(`Usage: \`${configHandler.getPrefix(message.guild.id)}setadminrole @Role\``);
-        }
-
-        const roleMention = args[0];
+        // Check if a role is mentioned
         const role = message.mentions.roles.first();
-
         if (!role) {
-            return message.reply('Please mention a valid role.');
+            return message.reply(`❌ Usage: \`${configHandler.getPrefix(message.guild.id)}setadminrole @role\``);
         }
 
-        // Set the admin role
-        configHandler.setAdminRole(role.name);
-        message.reply(`✅ Admin role has been set to "${role.name}".`);
+        try {
+            // Set the admin role ID in config
+            configHandler.setAdminRole(role.id);
+            message.reply(`✅ Admin role has been set to "${role.name}".`);
+        } catch (error) {
+            console.error(`Error setting admin role:`, error);
+            message.reply(`❌ Failed to set admin role: ${error.message}`);
+        }
     },
 };

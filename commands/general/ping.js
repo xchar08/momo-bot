@@ -1,12 +1,16 @@
-// ping.js
-const { EmbedBuilder } = require('discord.js');
-
+// commands/general/ping.js
 module.exports = {
     name: 'ping',
-    description: 'Checks the bot\'s latency.',
+    description: 'Replies with Pong!',
     category: 'General',
     async execute(message, args, client) {
-        const sent = await message.channel.send('Pinging...');
-        sent.edit(`Pong! Latency: ${sent.createdTimestamp - message.createdTimestamp}ms. API Latency: ${Math.round(client.ws.ping)}ms`);
+        try {
+            const sentMessage = await message.channel.send('Pinging...');
+            const latency = sentMessage.createdTimestamp - message.createdTimestamp;
+            sentMessage.edit(`Pong! Latency: ${latency}ms`);
+        } catch (error) {
+            console.error('Error executing ping command:', error);
+            message.channel.send('❌ An error occurred while executing that command.');
+        }
     },
 };

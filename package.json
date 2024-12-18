@@ -1,16 +1,32 @@
 {
-  "name": "discord-bot",
+  "name": "momo-bot",
   "version": "1.0.0",
-  "description": "A comprehensive Discord bot with organized file structure.",
+  "description": "A versatile Discord bot for dynamic club management and user verification.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint .",
+    "prepare": "husky install"
   },
-  "author": "YourName",
+  "keywords": [
+    "discord",
+    "bot",
+    "verification",
+    "club-management",
+    "discord.js"
+  ],
+  "author": "Your Name",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.16.3",
+    "discord.js": "^14.11.0",
     "dotenv": "^16.3.1",
+    "ms": "^2.1.3",
     "node-schedule": "^2.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.49.0",
+    "husky": "^8.0.3",
+    "nodemon": "^3.0.1"
   }
 }

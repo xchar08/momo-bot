@@ -30,7 +30,7 @@
 
 Before setting up **momo-bot**, ensure you have the following:
 
-- **Node.js:** Version 16.6.0 or higher.
+- **Node.js:** Version 16.9.0 or higher (preferably LTS like v18.x).
 - **npm:** Node package manager.
 - **Discord Bot Token:** Create a bot via the [Discord Developer Portal](https://discord.com/developers/applications).
 
@@ -49,32 +49,64 @@ Before setting up **momo-bot**, ensure you have the following:
     npm install
     ```
 
+    **Note:** If you encounter errors related to Husky during this step, refer to the [Fixing Husky Installation Error](#fixing-husky-installation-error) section below.
+
 3. **Set Up Environment Variables:**
 
-    - Rename `.env.example` to `.env`:
+    - **Create `.env` File:**
 
         ```bash
         cp .env.example .env
         ```
 
-    - Open `.env` and add your Discord bot token:
+    - **Edit `.env`:**
+
+        Open `.env` and add your Discord bot token and desired prefix.
 
         ```env
         DISCORD_TOKEN=your-discord-bot-token-here
         DEFAULT_PREFIX=!
         ```
 
-4. **Run the Bot:**
+4. **Set Up Husky Git Hooks:**
+
+    Husky ensures that certain scripts (like linting) run before commits to maintain code quality.
 
     ```bash
-    node index.js
+    npm run prepare
     ```
 
-    Or, if using nodemon for development:
+    - **Add Pre-Commit Hook:**
 
-    ```bash
-    npx nodemon index.js
-    ```
+        ```bash
+        npx husky add .husky/pre-commit "npm run lint"
+        ```
+
+    - **This Hook Will:**
+        - Run ESLint before each commit.
+        - Prevent commits if linting errors are detected.
+
+5. **Run the Bot:**
+
+    - **Development Mode (with `nodemon`):**
+
+        ```bash
+        npm run dev
+        ```
+
+        *Benefits:*
+        - Automatically restarts the bot when file changes are detected.
+        - Useful for development and testing.
+
+    - **Production Mode:**
+
+        ```bash
+        npm run start
+        ```
+
+        *Benefits:*
+        - Runs the bot without the overhead of monitoring file changes.
+        - Suitable for deployment environments.
 
 ## 🛠 Configuration
 
@@ -101,3 +133,4 @@ Upon the first run, a `config.json` file will be generated in the `config/` dire
     "archiveCategoryId": "",
     "collabCategoryId": ""
 }
+```
