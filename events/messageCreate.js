@@ -9,39 +9,36 @@ module.exports = {
         if (countingChannels.includes(message.channel.id)) {
             const currentCount = configHandler.getCountingCount(message.channel.id);
             const mode = configHandler.getCountingMode(message.channel.id) || 'normal';
+            
+            // Parse user input as a number
             const userNumber = parseInt(message.content, 10);
 
+            // Check if the message content is not a number
             if (isNaN(userNumber)) {
-                return message.delete().catch(() => {});
+                message.react('❌');
+                return; // Exit early if it's not a valid number
             }
 
             // Determine the expected number based on the mode
             let expectedNumber;
             switch (mode) {
                 case 'count2':
-                    expectedNumber = currentCount;
-                    break;
                 case 'count3':
-                    expectedNumber = currentCount;
-                    break;
                 case 'count4':
-                    expectedNumber = currentCount;
-                    break;
                 case 'count5':
-                    expectedNumber = currentCount;
-                    break;
                 case 'countdown':
                     expectedNumber = currentCount;
                     break;
-                default: // Normal or hex/binary
+                default: // Normal or other unsupported modes
                     expectedNumber = currentCount;
                     break;
             }
 
+            // Validate the user's input
             if (userNumber === expectedNumber) {
                 message.react('✅');
 
-                // Check for milestone and celebrate
+                // Check for milestone
                 const milestoneStep = 100; // Customize milestone frequency
                 if (userNumber % milestoneStep === 0) {
                     message.channel.send(`🎉 **Milestone Reached!** ${userNumber} 🎉`);
@@ -78,8 +75,6 @@ module.exports = {
                 });
 
                 configHandler.setCountingCount(message.channel.id, resetValue);
-
-                message.delete().catch(() => {});
             }
         }
 
