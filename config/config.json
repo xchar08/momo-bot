@@ -1,7 +1,6 @@
 {
     "prefixes": {
-        "your-guild-id": "!",
-        "1318751291366965268": "!"
+        "your-guild-id": "!"
     },
     "logChannels": {
         "your-guild-id": ""
@@ -9,21 +8,13 @@
     "countingChannels": {
         "your-guild-id": []
     },
-    "clubs": {
-        "csec": {
-            "members": {
-                "webdev": "1116262688310431795",
-                "idekwdqwdwefwfwe": "668349739565056020"
-            },
-            "maxMembers": 5
-        }
-    },
+    "clubs": {},
     "countingModes": {},
     "countingCounts": {},
-    "verificationRole": "1318759431642546226",
-    "unverifiedRole": "1318759609523114055",
-    "adminRole": "1318808872328233020",
-    "archiveCategoryId": "archive",
-    "collabCategoryId": "collabs",
-    "ticketCategoryId": "tickets"
+    "verificationRole": "",
+    "unverifiedRole": "",
+    "adminRole": "",
+    "archiveCategoryId": "",
+    "collabCategoryId": "",
+    "ticketCategoryId": ""
 }
