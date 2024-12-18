@@ -8,11 +8,19 @@
     "countingChannels": {
         "your-guild-id": []
     },
+    "clubs": {
+        "rover": {
+            "members": {
+                "sparklead": "1116262688310431795"
+            },
+            "maxMembers": 5
+        }
+    },
     "countingModes": {},
     "countingCounts": {},
-    "verificationRole": "",
-    "clubs": {},
-    "adminRole": "",
+    "verificationRole": "1318759431642546226",
+    "unverifiedRole": "",
+    "adminRole": "1318808872328233020",
     "archiveCategoryId": "",
     "collabCategoryId": ""
 }

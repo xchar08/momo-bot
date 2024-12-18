@@ -1,9 +1,11 @@
-// commands/admin/setVerifRole.js
+// commands/admin/setUnverifiedRole.js
 
 module.exports = {
-    name: 'setverifrole',
-    description: 'Sets the verification role.',
+    name: 'setunverifiedrole',
+    description: 'Sets the Unverified role for the server.',
     category: 'Admin',
+    usage: '!setunverifiedrole @Role',
+    args: true,
     async execute(message, args, client) {
         const configHandler = client.configHandler;
 
@@ -17,19 +19,20 @@ module.exports = {
             return message.reply('❌ Admin role is not set. Please set it using the `!setadminrole` command.');
         }
 
-        // Check if a role is mentioned
-        const role = message.mentions.roles.first();
-        if (!role) {
-            return message.reply(`❌ Usage: \`${configHandler.getPrefix(message.guild.id)}setverifrole @role\``);
+        // Parse the role mention
+        const roleMention = message.mentions.roles.first();
+        if (!roleMention) {
+            return message.reply('❌ Please mention the role you want to set as the Unverified role.\nUsage: `!setunverifiedrole @Role`');
         }
 
         try {
-            // Set the verification role ID in config
-            configHandler.setVerificationRole(role.id);
-            message.reply(`✅ Verification role has been set to "${role.name}".`);
+            // Set the Unverified role in the configuration
+            configHandler.setUnverifiedRole(roleMention.id);
+
+            message.channel.send(`✅ The Unverified role has been set to **${roleMention.name}**.`);
         } catch (error) {
-            console.error(`Error setting verification role:`, error);
-            message.reply(`❌ Failed to set verification role: ${error.message}`);
+            console.error(`Error setting Unverified role:`, error);
+            message.reply(`❌ An error occurred while setting the Unverified role: ${error.message}`);
         }
     },
 };
