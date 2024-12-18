@@ -19,8 +19,8 @@ A comprehensive and organized Discord bot built with `discord.js`.
 1. **Clone the Repository**
 
     ```bash
-    git clone https://github.com/yourusername/discord-bot.git
-    cd discord-bot
+    git clone https://github.com/xchar08/momo-bot.git
+    cd momo-bot
     ```
 
 2. **Install Dependencies**
