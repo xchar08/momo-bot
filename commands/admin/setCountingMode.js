@@ -1,99 +1,51 @@
 module.exports = {
-    name: 'messageCreate',
-    async execute(message, client) {
-        if (message.author.bot) return;
+    name: 'setcountingmode',
+    description: 'Sets the counting mode for a counting channel.',
+    category: 'Admin',
+    async execute(message, args, client) {
+        const configHandler = client.configHandler; // Corrected from require to use client reference
 
-        const configHandler = client.configHandler;
+        // Check if the user has the admin role
+        const adminRoleId = configHandler.getAdminRole(message.guild.id); // Added guild ID parameter
+        if (!adminRoleId) {
+            return message.reply('❌ Admin role is not set. Please set it using the `!setadminrole` command.');
+        }
+
+        if (!message.member.roles.cache.has(adminRoleId)) {
+            return message.reply('❌ You do not have permission to use this command.');
+        }
+
+        // Command syntax: setcountingmode #channel <mode>
+        if (args.length < 2) {
+            return message.reply(
+                `❌ **Incorrect usage!**\n\n**Usage:** \`${configHandler.getPrefix(message.guild.id)}setcountingmode #channel <mode>\`\n**Available Modes:** normal, hex, binary, count2, count3, count4, count5, countdown`
+            );
+        }
+
+        const channel = message.mentions.channels.first();
+        if (!channel) {
+            return message.reply('❌ Please mention the counting channel you want to set the mode for.');
+        }
+
+        const modeInput = args[1].toLowerCase();
+        const availableModes = ['normal', 'hex', 'binary', 'count2', 'count3', 'count4', 'count5', 'countdown'];
+
+        if (!availableModes.includes(modeInput)) {
+            return message.reply(`❌ Invalid counting mode. Available modes: ${availableModes.join(', ')}`);
+        }
+
+        // Check if the channel is a counting channel
         const countingChannels = configHandler.getCountingChannels(message.guild.id);
-
-        if (countingChannels.includes(message.channel.id)) {
-            const currentCount = configHandler.getCountingCount(message.channel.id);
-            const mode = configHandler.getCountingMode(message.channel.id) || 'normal';
-            
-            // Parse user input as a number
-            const userNumber = parseInt(message.content, 10);
-
-            // Check if the message content is not a number
-            if (isNaN(userNumber)) {
-                message.react('❌');
-                return; // Exit early if it's not a valid number
-            }
-
-            // Determine the expected number based on the mode
-            let expectedNumber;
-            switch (mode) {
-                case 'count2':
-                case 'count3':
-                case 'count4':
-                case 'count5':
-                case 'countdown':
-                    expectedNumber = currentCount;
-                    break;
-                default: // Normal or other unsupported modes
-                    expectedNumber = currentCount;
-                    break;
-            }
-
-            // Validate the user's input
-            if (userNumber === expectedNumber) {
-                message.react('✅');
-
-                // Check for milestone
-                const milestoneStep = 100; // Customize milestone frequency
-                if (userNumber % milestoneStep === 0) {
-                    message.channel.send(`🎉 **Milestone Reached!** ${userNumber} 🎉`);
-                }
-
-                // Update the count based on the mode
-                switch (mode) {
-                    case 'count2':
-                        configHandler.setCountingCount(message.channel.id, currentCount + 2);
-                        break;
-                    case 'count3':
-                        configHandler.setCountingCount(message.channel.id, currentCount + 3);
-                        break;
-                    case 'count4':
-                        configHandler.setCountingCount(message.channel.id, currentCount + 4);
-                        break;
-                    case 'count5':
-                        configHandler.setCountingCount(message.channel.id, currentCount + 5);
-                        break;
-                    case 'countdown':
-                        configHandler.setCountingCount(message.channel.id, currentCount - 1);
-                        break;
-                    default: // Normal
-                        configHandler.setCountingCount(message.channel.id, currentCount + 1);
-                        break;
-                }
-            } else {
-                message.react('❌');
-
-                // Notify and reset the count
-                const resetValue = mode === 'countdown' ? 1000 : 1;
-                message.reply(`❌ Incorrect number. The count has been reset to ${resetValue}.`).then(msg => {
-                    setTimeout(() => msg.delete().catch(() => {}), 5000);
-                });
-
-                configHandler.setCountingCount(message.channel.id, resetValue);
-            }
+        if (!countingChannels.includes(channel.id)) {
+            return message.reply(
+                `❌ Channel ${channel} is not set as a counting channel. Use the \`setcountingchannel add #channel\` command to add it.`
+            );
         }
 
-        // Command execution logic
-        const prefix = configHandler.getPrefix(message.guild.id) || '!';
-        if (!message.content.startsWith(prefix)) return;
+        // Set the mode and reset the count
+        configHandler.setCountingMode(channel.id, modeInput);
+        configHandler.setCountingCount(channel.id, modeInput === 'countdown' ? 1000 : 1); // Set initial count based on mode
 
-        const args = message.content.slice(prefix.length).trim().split(/ +/);
-        const commandName = args.shift().toLowerCase();
-
-        const command = client.commands.get(commandName);
-
-        if (!command) return;
-
-        try {
-            command.execute(message, args, client);
-        } catch (error) {
-            console.error(`Error executing command ${commandName}:`, error);
-            message.reply('❌ There was an error trying to execute that command!');
-        }
+        message.reply(`✅ Counting mode for channel ${channel} has been set to **${modeInput}**, and the count has been reset.`);
     },
 };

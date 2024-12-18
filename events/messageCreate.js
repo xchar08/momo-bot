@@ -9,43 +9,63 @@ module.exports = {
         if (countingChannels.includes(message.channel.id)) {
             const currentCount = configHandler.getCountingCount(message.channel.id);
             const mode = configHandler.getCountingMode(message.channel.id) || 'normal';
-            
-            // Parse user input as a number
-            const userNumber = parseInt(message.content, 10);
+            let userInput = message.content.trim();
 
-            // Check if the message content is not a number
+            let userNumber;
+            let expectedNumber;
+
+            // Parse user input based on mode
+            try {
+                switch (mode) {
+                    case 'binary':
+                        userNumber = parseInt(userInput, 2); // Parse binary input
+                        expectedNumber = currentCount;
+                        break;
+                    case 'hex':
+                        userNumber = parseInt(userInput, 16); // Parse hexadecimal input
+                        expectedNumber = currentCount;
+                        break;
+                    case 'count2':
+                    case 'count3':
+                    case 'count4':
+                    case 'count5':
+                    case 'countdown':
+                        userNumber = parseInt(userInput, 10); // Decimal input
+                        expectedNumber = currentCount;
+                        break;
+                    default: // Normal
+                        userNumber = parseInt(userInput, 10); // Decimal input
+                        expectedNumber = currentCount;
+                        break;
+                }
+            } catch (error) {
+                message.react('❌');
+                return; // If parsing fails, exit early
+            }
+
+            // Check if input is invalid
             if (isNaN(userNumber)) {
                 message.react('❌');
                 return; // Exit early if it's not a valid number
-            }
-
-            // Determine the expected number based on the mode
-            let expectedNumber;
-            switch (mode) {
-                case 'count2':
-                case 'count3':
-                case 'count4':
-                case 'count5':
-                case 'countdown':
-                    expectedNumber = currentCount;
-                    break;
-                default: // Normal or other unsupported modes
-                    expectedNumber = currentCount;
-                    break;
             }
 
             // Validate the user's input
             if (userNumber === expectedNumber) {
                 message.react('✅');
 
-                // Check for milestone
-                const milestoneStep = 100; // Customize milestone frequency
+                // Milestone Check
+                const milestoneStep = 100;
                 if (userNumber % milestoneStep === 0) {
-                    message.channel.send(`🎉 **Milestone Reached!** ${userNumber} 🎉`);
+                    message.channel.send(`🎉 **Milestone Reached!** ${userInput} 🎉`);
                 }
 
-                // Update the count based on the mode
+                // Update the count
                 switch (mode) {
+                    case 'binary':
+                    case 'hex':
+                    case 'normal':
+                        configHandler.setCountingCount(message.channel.id, currentCount + 1);
+                        break;
                     case 'count2':
                         configHandler.setCountingCount(message.channel.id, currentCount + 2);
                         break;
@@ -61,16 +81,13 @@ module.exports = {
                     case 'countdown':
                         configHandler.setCountingCount(message.channel.id, currentCount - 1);
                         break;
-                    default: // Normal
-                        configHandler.setCountingCount(message.channel.id, currentCount + 1);
-                        break;
                 }
             } else {
                 message.react('❌');
 
-                // Notify and reset the count
+                // Notify and reset
                 const resetValue = mode === 'countdown' ? 1000 : 1;
-                message.reply(`❌ Incorrect number. The count has been reset to ${resetValue}.`).then(msg => {
+                message.reply(`❌ Incorrect input. The count has been reset to ${resetValue}.`).then(msg => {
                     setTimeout(() => msg.delete().catch(() => {}), 5000);
                 });
 
@@ -78,7 +95,7 @@ module.exports = {
             }
         }
 
-        // Command execution logic
+        // Command Execution Logic
         const prefix = configHandler.getPrefix(message.guild.id) || '!';
         if (!message.content.startsWith(prefix)) return;
 
