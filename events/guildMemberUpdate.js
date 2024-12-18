@@ -1,5 +1,5 @@
 // guildMemberUpdate.js
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'guildMemberUpdate',
@@ -19,7 +19,7 @@ module.exports = {
 
         if (addedRoles.size === 0 && removedRoles.size === 0) return; // No role changes
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#0000FF')
             .setTitle('Member Roles Updated')
             .addFields(
@@ -33,11 +33,11 @@ module.exports = {
             .setTimestamp();
 
         if (addedRoles.size > 0) {
-            embed.addField('Roles Added', addedRoles.map(r => r.name).join(', '), false);
+            embed.addFields({ name: 'Roles Added', value: addedRoles.map(r => r.name).join(', '), inline: false });
         }
 
         if (removedRoles.size > 0) {
-            embed.addField('Roles Removed', removedRoles.map(r => r.name).join(', '), false);
+            embed.addFields({ name: 'Roles Removed', value: removedRoles.map(r => r.name).join(', '), inline: false });
         }
 
         logChannel.send({ embeds: [embed] });

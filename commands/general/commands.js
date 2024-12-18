@@ -1,5 +1,5 @@
 // commands.js
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'commands',
@@ -9,12 +9,12 @@ module.exports = {
         const configHandler = require('../../config/configHandler');
         const prefix = configHandler.getPrefix(message.guild.id);
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('Bot Commands')
             .setDescription('Here is a list of all available commands:')
             .setTimestamp()
-            .setFooter('Bot by YourName');
+            .setFooter({ text: 'Bot by YourName' });
 
         // Dynamically list commands
         const categories = {};
@@ -26,7 +26,7 @@ module.exports = {
         });
 
         for (const [category, cmds] of Object.entries(categories)) {
-            embed.addField(`**${category}**`, cmds.join('\n'), false);
+            embed.addFields({ name: `**${category}**`, value: cmds.join('\n'), inline: false });
         }
 
         // Add Presets Information
@@ -39,8 +39,20 @@ module.exports = {
         const collabCategoryId = config.collabCategoryId ? `<#${config.collabCategoryId}>` : 'Not Set';
 
         embed.addFields(
-            { name: '📁 Current Presets', value: `**Log Channel:** ${logChannel}\n**Admin Role:** ${adminRoleName}\n**Verification Role:** ${verificationRoleName}\n**Archive Category:** ${archiveCategoryId}\n**Collaboration Category:** ${collabCategoryId}`, inline: false },
-            { name: '📚 Clubs', value: Object.keys(config.clubs).length > 0 ? Object.entries(config.clubs).map(([club, details]) => `**${club}** - Max Officers: ${details.maxOfficers}, Officer Roles: ${details.officerRoles.join(', ')}, Additional Roles: ${details.additionalRoles.join(', ')}`).join('\n') : 'No clubs configured.', inline: false }
+            {
+                name: '📁 Current Presets',
+                value: `**Log Channel:** ${logChannel}\n**Admin Role:** ${adminRoleName}\n**Verification Role:** ${verificationRoleName}\n**Archive Category:** ${archiveCategoryId}\n**Collaboration Category:** ${collabCategoryId}`,
+                inline: false
+            },
+            {
+                name: '📚 Clubs',
+                value: Object.keys(config.clubs).length > 0
+                    ? Object.entries(config.clubs).map(([club, details]) =>
+                        `**${club}** - Max Officers: ${details.maxOfficers}, Officer Roles: ${details.officerRoles.join(', ')}, Additional Roles: ${details.additionalRoles.join(', ')}`
+                    ).join('\n')
+                    : 'No clubs configured.',
+                inline: false
+            }
         );
 
         message.channel.send({ embeds: [embed] });

@@ -1,4 +1,6 @@
 // ping.js
+const { EmbedBuilder } = require('discord.js');
+
 module.exports = {
     name: 'ping',
     description: 'Checks the bot\'s latency.',

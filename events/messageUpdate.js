@@ -1,5 +1,5 @@
 // messageUpdate.js
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'messageUpdate',
@@ -14,7 +14,7 @@ module.exports = {
         const logChannel = newMessage.guild.channels.cache.get(logChannelId);
         if (!logChannel) return;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#FFFF00')
             .setTitle('Message Edited')
             .addFields(

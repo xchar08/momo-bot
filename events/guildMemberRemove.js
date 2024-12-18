@@ -1,5 +1,5 @@
 // guildMemberRemove.js
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'guildMemberRemove',
@@ -11,7 +11,7 @@ module.exports = {
         const logChannel = member.guild.channels.cache.get(logChannelId);
         if (!logChannel) return;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#FFA500')
             .setTitle('Member Left')
             .addFields(

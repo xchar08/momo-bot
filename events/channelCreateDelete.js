@@ -1,5 +1,5 @@
 // channelCreateDelete.js
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = [
     {
@@ -12,12 +12,12 @@ module.exports = [
             const logChannel = channel.guild.channels.cache.get(logChannelId);
             if (!logChannel) return;
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('#00FF00')
                 .setTitle('Channel Created')
                 .addFields(
                     { name: 'Channel', value: `${channel.name} (${channel.id})`, inline: true },
-                    { name: 'Type', value: channel.type, inline: true }
+                    { name: 'Type', value: channel.type === 0 ? 'Text' : channel.type === 2 ? 'Voice' : 'Other', inline: true }
                 )
                 .setTimestamp();
 
@@ -34,12 +34,12 @@ module.exports = [
             const logChannel = channel.guild.channels.cache.get(logChannelId);
             if (!logChannel) return;
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
                 .setColor('#FF0000')
                 .setTitle('Channel Deleted')
                 .addFields(
                     { name: 'Channel', value: `${channel.name} (${channel.id})`, inline: true },
-                    { name: 'Type', value: channel.type, inline: true }
+                    { name: 'Type', value: channel.type === 0 ? 'Text' : channel.type === 2 ? 'Voice' : 'Other', inline: true }
                 )
                 .setTimestamp();
 

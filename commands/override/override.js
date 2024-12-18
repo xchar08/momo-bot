@@ -1,4 +1,5 @@
 // override.js
+const { PermissionFlagsBits, EmbedBuilder } = require('discord.js');
 const configHandler = require('../../config/configHandler');
 const schedule = require('node-schedule');
 
@@ -13,7 +14,7 @@ module.exports = {
         }
 
         const clubName = args[0];
-        const memberMention = args[1];
+        const memberMention = message.mentions.members.first();
         const clubRoleName = args[2];
         const irlName = args.slice(3).join(' ');
 
@@ -28,10 +29,11 @@ module.exports = {
         }
 
         // Fetch the member to verify
-        const member = message.mentions.members.first();
-        if (!member) {
+        if (!memberMention) {
             return message.reply('Please mention a valid member to verify.');
         }
+
+        const member = memberMention;
 
         // Fetch the club role
         const clubRole = message.guild.roles.cache.find(r => r.name === clubRoleName);
@@ -44,9 +46,7 @@ module.exports = {
 
         if (isOfficerRole) {
             // Count current officers in the club for the specific role
-            const currentOfficers = message.guild.members.cache.filter(m => {
-                return m.roles.cache.has(clubRole.id);
-            }).size;
+            const currentOfficers = message.guild.members.cache.filter(m => m.roles.cache.has(clubRole.id)).size;
 
             if (currentOfficers < clubConfig.maxOfficers) {
                 return message.reply(`There are still available officer slots in "${clubName}". No need to override.`);

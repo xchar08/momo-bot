@@ -1,6 +1,7 @@
 // collab.js
 const configHandler = require('../../config/configHandler');
 const schedule = require('node-schedule');
+const { ChannelType, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
     name: 'collab',
@@ -36,18 +37,19 @@ module.exports = {
         // Create a temporary collaboration channel
         const collabCategoryId = configHandler.config.collabCategoryId;
         const collabCategory = message.guild.channels.cache.get(collabCategoryId);
-        if (!collabCategory || collabCategory.type !== 'GUILD_CATEGORY') {
+        if (!collabCategory || collabCategory.type !== ChannelType.GuildCategory) {
             return message.reply('Collaborations category does not exist or is not a category. Please check your config.');
         }
 
         try {
-            const collabChannel = await message.guild.channels.create(`collab-${eventName.toLowerCase().replace(/\s+/g, '-')}`, {
-                type: 'GUILD_TEXT',
+            const collabChannel = await message.guild.channels.create({
+                name: `collab-${eventName.toLowerCase().replace(/\s+/g, '-')}`,
+                type: ChannelType.GuildText,
                 parent: collabCategory.id,
                 permissionOverwrites: [
                     {
                         id: message.guild.roles.everyone.id,
-                        deny: ['VIEW_CHANNEL'],
+                        deny: [PermissionFlagsBits.ViewChannel],
                     },
                     // Allow specific club roles to view the channel
                     ...clubNames.flatMap(club => {
@@ -58,17 +60,23 @@ module.exports = {
                             if (role) {
                                 return {
                                     id: role.id,
-                                    allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+                                    allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
                                 };
                             }
                         }).filter(Boolean);
                     }),
                     // Allow admins to view and manage the channel
-                    {
-                        id: message.guild.roles.cache.find(r => r.name === configHandler.getAdminRole())?.id,
-                        allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'MANAGE_CHANNELS'],
-                    }
-                ],
+                    (() => {
+                        const adminRole = message.guild.roles.cache.find(r => r.name === configHandler.getAdminRole());
+                        if (adminRole) {
+                            return {
+                                id: adminRole.id,
+                                allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.ManageChannels],
+                            };
+                        }
+                        return null;
+                    })(),
+                ].filter(Boolean),
             });
 
             collabChannel.send(`Collaboration Channel for **${eventName}** involving clubs: ${clubNames.join(', ')}.\nDiscuss and plan your event here.\n\nAdmins can use \`${prefix}close\` to archive this channel.`);

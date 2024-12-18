@@ -1,5 +1,5 @@
 // roleDelete.js
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'roleDelete',
@@ -11,7 +11,7 @@ module.exports = {
         const logChannel = role.guild.channels.cache.get(logChannelId);
         if (!logChannel) return;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#FF0000')
             .setTitle('Role Deleted')
             .addFields(

@@ -1,5 +1,5 @@
 // roleCreate.js
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     name: 'roleCreate',
@@ -11,7 +11,7 @@ module.exports = {
         const logChannel = role.guild.channels.cache.get(logChannelId);
         if (!logChannel) return;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor('#00FF00')
             .setTitle('Role Created')
             .addFields(
