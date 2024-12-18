@@ -2,6 +2,8 @@
     "prefixes": {},
     "logChannels": {},
     "countingChannels": {},
+    "countingModes": {},
+    "countingCounts": {},
     "verificationRole": "",
     "clubs": {},
     "adminRole": "",

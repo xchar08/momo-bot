@@ -9,6 +9,8 @@ let config = {
     prefixes: {},
     logChannels: {},
     countingChannels: {},
+    countingModes: {},
+    countingCounts: {},
     verificationRole: "",
     clubs: {},
     adminRole: "",
@@ -104,7 +106,7 @@ const setCollabCategory = (categoryId) => {
     saveConfig();
 };
 
-// **New Getter and Setter for Counting Channels**
+// **New Getter and Setter for Counting Channels, Modes, and Counts**
 
 const getCountingChannels = (guildId) => {
     return config.countingChannels[guildId] || [];
@@ -123,12 +125,58 @@ const addCountingChannel = (guildId, channelId) => {
 const removeCountingChannel = (guildId, channelId) => {
     if (config.countingChannels[guildId]) {
         config.countingChannels[guildId] = config.countingChannels[guildId].filter(id => id !== channelId);
+        // Also remove mode and count
+        delete config.countingModes[channelId];
+        delete config.countingCounts[channelId];
         saveConfig();
     }
 };
 
 const clearCountingChannels = (guildId) => {
     config.countingChannels[guildId] = [];
+    // Optionally, clear modes and counts
+    Object.keys(config.countingModes).forEach(channelId => {
+        if (config.countingChannels[guildId].includes(channelId)) {
+            delete config.countingModes[channelId];
+            delete config.countingCounts[channelId];
+        }
+    });
+    saveConfig();
+};
+
+// Counting Modes
+const getCountingMode = (channelId) => {
+    return config.countingModes[channelId] || 'normal';
+};
+
+const setCountingMode = (channelId, mode) => {
+    config.countingModes[channelId] = mode;
+    // Initialize count based on mode
+    if (mode === 'countdown') {
+        config.countingCounts[channelId] = 1000;
+    } else {
+        config.countingCounts[channelId] = 1;
+    }
+    saveConfig();
+};
+
+// Counting Counts
+const getCountingCount = (channelId) => {
+    return config.countingCounts[channelId] || 1;
+};
+
+const setCountingCount = (channelId, count) => {
+    config.countingCounts[channelId] = count;
+    saveConfig();
+};
+
+const resetCountingCount = (channelId) => {
+    const mode = getCountingMode(channelId);
+    if (mode === 'countdown') {
+        config.countingCounts[channelId] = 1000;
+    } else {
+        config.countingCounts[channelId] = 1;
+    }
     saveConfig();
 };
 
@@ -147,8 +195,13 @@ module.exports = {
     getAllClubs,
     setArchiveCategory,
     setCollabCategory,
-    getCountingChannels,      // New
-    addCountingChannel,       // New
-    removeCountingChannel,    // New
-    clearCountingChannels     // New
+    getCountingChannels,
+    addCountingChannel,
+    removeCountingChannel,
+    clearCountingChannels,
+    getCountingMode,
+    setCountingMode,
+    getCountingCount,
+    setCountingCount,
+    resetCountingCount
 };

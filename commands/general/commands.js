@@ -53,7 +53,7 @@ module.exports = {
             },
             {
                 name: '🎲 Counting Game',
-                value: `**Counting Channels:** ${countingChannelsFormatted}\n**Setup Command:** \`${prefix}setcountingchannel #channel\`\n**Manage Counting Channels:** \`${prefix}setcountingchannel add/remove/list\``,
+                value: `**Counting Channels:** ${countingChannelsFormatted}\n**Setup Command:** \`${prefix}setcountingchannel add #channel\`\n**Manage Counting Channels:** \`${prefix}setcountingchannel add/remove/list\`\n**Set Counting Mode:** \`${prefix}setcountingmode #channel <mode>\`\n**Available Modes:** normal, hex, binary, count2, count3, count4, count5, countdown`,
                 inline: false
             },
             {
