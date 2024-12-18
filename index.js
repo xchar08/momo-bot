@@ -14,6 +14,7 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds, // Guild-related events
         GatewayIntentBits.GuildMessages, // Message-related events
+        GatewayIntentBits.GuildVoiceStates, // Required for voiceStateUpdate
         GatewayIntentBits.MessageContent, // To read message content
         GatewayIntentBits.GuildMembers, // Member-related events
         GatewayIntentBits.GuildMessageReactions, // Reaction-related events
