@@ -31,6 +31,15 @@ client.commands = new Collection();
 // Initialize in-memory counting storage
 client.counting = new Map();
 
+// Initialize Mini Momo game state
+client.miniMomos = {
+    hunger: 100,
+    happiness: 100,
+    health: 100,
+    lastInteraction: Date.now(),
+    contributors: {},
+};
+
 // Define the path to the commands directory
 const commandsPath = path.join(__dirname, 'commands');
 

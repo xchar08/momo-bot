@@ -37,7 +37,7 @@ module.exports = {
                         `\`${prefix}setcountingmode\`: Sets the counting mode for a counting channel.\n` +
                         `\`${prefix}setlogchannel\`: Sets the log channel for the server.\n` +
                         `\`${prefix}setprefix\`: Sets a new command prefix.\n` +
-                        `\`${prefix}setverifrole\`: Sets the verification role.` 
+                        `\`${prefix}setverifrole\`: Sets the verification role.`
                 },
                 {
                     name: '🫂 **Collaboration**',
@@ -49,13 +49,18 @@ module.exports = {
                         `\`${prefix}ping\`: Replies with Pong!\n` +
                         `\`${prefix}verify\`: Verifies a member by assigning them a club and position.\n` +
                         `\`${prefix}forceverify\`: Forcefully verifies a member, allowing clubs to exceed their member limit temporarily.\n` +
-                        `\`${prefix}unverify\`: Unverifies a member by removing their club and verification roles.` 
+                        `\`${prefix}unverify\`: Unverifies a member by removing their club and verification roles.\n` +
+                        `\`${prefix}resources\`: Displays a list of officer resources.`
                 },
                 {
                     name: '🎟️ **Ticket**',
                     value: `\`${prefix}ticket <club> @member <IRL name>\`: Creates a ticket channel for admin approval of officer roles.\n` +
                         `\`${prefix}approve @member <role>\`: Approves the ticket and assigns the role.\n` +
                         `\`${prefix}reject <reason>\`: Rejects the ticket with a specified reason.`
+                },
+                {
+                    name: '🐾 **Mini Momo Game**',
+                    value: `\`${prefix}momogame\`: Manage, feed, and play with Mini Momos to keep them alive and happy.`
                 },
                 {
                     name: '📁 **Current Configurations**',
